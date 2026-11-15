@@ -1,0 +1,34 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "silent-mi-trainer"
+version = "0.3.0"
+description = "CPU adapter fitting and offline ONNX model toolkit for @silent-mi"
+readme = "README.md"
+license = { text = "Apache-2.0" }
+requires-python = ">=3.9"
+dependencies = []
+
+[project.optional-dependencies]
+adapter = [
+    "numpy>=1.24.0",
+    "scipy>=1.10.0",
+    "onnxruntime>=1.16.0",
+    "tokenizers>=0.14.0",
+]
+quantize = [
+    "onnx>=1.14.0",
+    "onnxruntime>=1.16.0",
+]
+distill = [
+    "model2vec>=0.1.0",
+]
+
+[project.scripts]
+silent-mi-train = "silent_mi_trainer.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["silent_mi_trainer*"]
