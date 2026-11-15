@@ -1,0 +1,68 @@
+# Dependencies
+node_modules/
+.pnp/
+.pnp.js
+
+# Build artifacts & packages
+dist/
+release/
+*.tgz
+*.tsbuildinfo
+
+# Test & coverage reports
+coverage/
+test-results/
+playwright-report/
+
+# Models, weights & binaries
+*.onnx
+*.onnx_data
+*.safetensors
+*.bin
+*.wasm
+**/public/models/
+**/public/wasm/
+
+# Caches
+.cache/
+.eslintcache
+.turbo/
+.vite/
+
+# Python virtual environments & caches
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+ENV/
+env.bak/
+venv.bak/
+.pytest_cache/
+*.egg-info/
+.eggs/
+
+# Generated training workspaces
+**/training/
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# OS / Editor files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Explicitly tracked invariants
+!AGENTS.md
+!.agents/
+!.agents/skills/
+!.agents/skills/**

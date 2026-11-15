@@ -1,0 +1,40 @@
+{
+  "name": "silent-mi-monorepo",
+  "version": "0.3.0",
+  "private": true,
+  "license": "Apache-2.0",
+  "type": "module",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "workspaces": [
+    "packages/*",
+    "sandbox/*"
+  ],
+  "scripts": {
+    "build": "npm run build --workspace=@silent-mi/core && npm run build --workspace=@silent-mi/cli && npm run build --workspace=@silent-mi/web && npm run build --workspace=@silent-mi/onnx",
+    "build:demo": "npm run build --workspace=demo-saas",
+    "prescan": "npm run build --workspace=@silent-mi/core",
+    "scan": "node --import tsx packages/cli/src/bin.ts scan --config sandbox/demo-saas/silent-mi.config.json",
+    "presuggest": "npm run build --workspace=@silent-mi/core",
+    "suggest": "node --import tsx packages/cli/src/bin.ts suggest --dir sandbox/demo-saas",
+    "verify": "node --import tsx packages/cli/src/bin.ts verify --config sandbox/demo-saas/silent-mi.config.json",
+    "init:train": "node --import tsx packages/cli/src/bin.ts init-train --config sandbox/demo-saas/silent-mi.config.json",
+    "smoke:model": "node --import tsx packages/cli/src/bin.ts smoke --config sandbox/demo-saas/silent-mi.config.json --models-dir sandbox/demo-saas/public/models",
+    "pack:sdk": "node -e \"import('node:fs').then(f=>f.mkdirSync('release', {recursive:true}))\" && npm pack --workspace=@silent-mi/core --workspace=@silent-mi/web --workspace=@silent-mi/onnx --workspace=@silent-mi/cli --pack-destination ./release",
+    "dev": "npx vite sandbox/demo-saas",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test",
+    "typecheck": "tsc -b packages/core packages/cli packages/web packages/onnx && npx tsc -p sandbox/demo-saas/tsconfig.json --noEmit"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.50.0",
+    "@types/node": "^22.10.0",
+    "jsdom": "^25.0.1",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.5",
+    "vitest": "^2.1.8"
+  }
+}
