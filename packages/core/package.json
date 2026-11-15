@@ -1,0 +1,19 @@
+{
+  "name": "@silent-mi/core",
+  "version": "0.3.0",
+  "description": "Zero-dependency hybrid engine, negation gate, Int8 quantization, and generalized RBAC for @silent-mi",
+  "license": "Apache-2.0",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -b"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "typescript": "^5.7.2"
+  }
+}
