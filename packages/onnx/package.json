@@ -13,7 +13,7 @@
     "build": "tsc -b"
   },
   "dependencies": {
-    "@silent-mi/core": "workspace:*"
+    "@silent-mi/core": "^0.3.0"
   },
   "peerDependencies": {
     "@huggingface/transformers": "^3.0.0"

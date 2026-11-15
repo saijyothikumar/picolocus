@@ -1,0 +1,31 @@
+{
+  "name": "@silent-mi/cli",
+  "version": "0.3.0",
+  "description": "Build-time HTML/JSX scanner, physical RBAC manifest compiler, smoke runner and training workspace generator for @silent-mi",
+  "license": "Apache-2.0",
+  "type": "module",
+  "bin": {
+    "silent-mi": "./dist/bin.js"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -b"
+  },
+  "dependencies": {
+    "@silent-mi/core": "^0.3.0",
+    "node-html-parser": "^7.0.1",
+    "typescript": "^5.7.2"
+  },
+  "peerDependencies": {
+    "@huggingface/transformers": "^3.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@huggingface/transformers": {
+      "optional": true
+    }
+  }
+}
