@@ -1,0 +1,29 @@
+{
+  "name": "@silent-mi/onnx",
+  "version": "0.3.0",
+  "description": "Optional WebWorker and WebAssembly EmbedderPlugin with latest-only queue and idle RAM reaper for @silent-mi",
+  "license": "Apache-2.0",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -b"
+  },
+  "dependencies": {
+    "@silent-mi/core": "workspace:*"
+  },
+  "peerDependencies": {
+    "@huggingface/transformers": "^3.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@huggingface/transformers": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "typescript": "^5.7.2"
+  }
+}
