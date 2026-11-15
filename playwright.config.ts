@@ -8,8 +8,12 @@ export default defineConfig({
   reporter: 'list',
   use: {
     channel: 'msedge',
+    baseURL: 'http://127.0.0.1:5173',
     viewport: { width: 1280, height: 800 },
     trace: 'on-first-retry',
+    launchOptions: {
+      args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-gpu'],
+    },
   },
   projects: [
     {
@@ -22,7 +26,7 @@ export default defineConfig({
   ],
   webServer: {
     command: 'npm run dev',
-    port: 5173,
+    url: 'http://127.0.0.1:5173',
     reuseExistingServer: !process.env['CI'],
     timeout: 120000,
   },
