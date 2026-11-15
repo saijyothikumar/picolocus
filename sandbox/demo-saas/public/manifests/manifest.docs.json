@@ -1,0 +1,72 @@
+{
+  "version": "1.0",
+  "role": "public",
+  "modelId": "none",
+  "modelSha256": "none",
+  "dimensions": 0,
+  "items": [
+    {
+      "id": "doc-clause-9bde0107",
+      "targetType": "doc_clause",
+      "label": "Manage your user account profile and application preferences...",
+      "verbatimText": "Manage your user account profile and application preferences.",
+      "docUrl": "sandbox\\demo-saas\\index.html",
+      "clauseAnchor": "clause-1",
+      "source": "manifest"
+    },
+    {
+      "id": "doc-clause-380fe157",
+      "targetType": "doc_clause",
+      "label": "Configure authentication, API tokens, and incoming/outgoing ...",
+      "verbatimText": "Configure authentication, API tokens, and incoming/outgoing webhook listeners.",
+      "docUrl": "sandbox\\demo-saas\\index.html",
+      "clauseAnchor": "clause-1",
+      "source": "manifest"
+    },
+    {
+      "id": "doc-clause-b1f1743e",
+      "targetType": "doc_clause",
+      "label": "Manage real-time subscription delivery destinations.",
+      "verbatimText": "Manage real-time subscription delivery destinations.",
+      "docUrl": "sandbox\\demo-saas\\index.html",
+      "clauseAnchor": "clause-1",
+      "source": "manifest"
+    },
+    {
+      "id": "doc-clause-a5a28826",
+      "targetType": "doc_clause",
+      "label": "Review customer billing statements, subscription line items,...",
+      "verbatimText": "Review customer billing statements, subscription line items, and transaction history.",
+      "docUrl": "sandbox\\demo-saas\\index.html",
+      "clauseAnchor": "clause-1",
+      "source": "manifest"
+    },
+    {
+      "id": "doc-clause-bf125410",
+      "targetType": "doc_clause",
+      "label": "We do not sell, rent, or trade your personal email address o...",
+      "verbatimText": "We do not sell, rent, or trade your personal email address or communication logs to third parties for commercial advertising purposes under any circumstances.",
+      "docUrl": "sandbox\\demo-saas\\index.html",
+      "clauseAnchor": "clause-1",
+      "source": "manifest"
+    },
+    {
+      "id": "doc-clause-477a409d",
+      "targetType": "doc_clause",
+      "label": "Customer financial records and transaction logs are securely...",
+      "verbatimText": "Customer financial records and transaction logs are securely retained for a minimum of seven years to comply with international statutory tax standards.",
+      "docUrl": "sandbox\\demo-saas\\index.html",
+      "clauseAnchor": "clause-1",
+      "source": "manifest"
+    },
+    {
+      "id": "doc-clause-78f65966",
+      "targetType": "doc_clause",
+      "label": "Users retain the unconditional right to request erasure of a...",
+      "verbatimText": "Users retain the unconditional right to request erasure of account records in full accordance with the General Data Protection Regulation.",
+      "docUrl": "sandbox\\demo-saas\\index.html",
+      "clauseAnchor": "clause-1",
+      "source": "manifest"
+    }
+  ]
+}

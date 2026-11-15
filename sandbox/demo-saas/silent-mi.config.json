@@ -1,0 +1,7 @@
+{
+  "scanDir": "sandbox/demo-saas",
+  "manifestsDir": "sandbox/demo-saas/public/manifests",
+  "modelsDir": "sandbox/demo-saas/public/models",
+  "trainingDir": "sandbox/demo-saas/training",
+  "modelId": "bge-micro-v2"
+}

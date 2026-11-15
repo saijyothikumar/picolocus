@@ -305,6 +305,16 @@ export class OnnxWorkerEmbedder implements EmbedderPlugin {
 }
 
 /**
+ * Helper to estimate ONNX RAM footprint from an EmbedderPlugin.
+ */
+export function estimateOnnxRamFootprintMb(embedder?: EmbedderPlugin | null): number {
+  if (embedder instanceof OnnxWorkerEmbedder) {
+    return embedder.estimateOnnxRamFootprintMb();
+  }
+  return 0.0;
+}
+
+/**
  * Telemetry: queries browser user agent specific memory if available.
  */
 export async function measureClientMemory(): Promise<number | null> {

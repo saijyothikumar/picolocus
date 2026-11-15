@@ -178,9 +178,10 @@ export class SmokeRunner {
   static synthesizeGoldens(items: ManifestItem[]): GoldenCase[] {
     const goldens: GoldenCase[] = [];
 
-    // 1. Positive cases
+    // 1. Positive cases (prefer controls with concise UI labels)
     const publicItems = items.filter((i) => !i.roles || i.roles.length === 0 || i.roles.includes('public'));
-    const samples = (publicItems.length > 0 ? publicItems : items).slice(0, 5);
+    const publicControls = publicItems.filter((i) => i.targetType !== 'doc_clause');
+    const samples = (publicControls.length >= 5 ? publicControls : publicItems).slice(0, 5);
     for (const s of samples) {
       goldens.push({
         query: s.label,

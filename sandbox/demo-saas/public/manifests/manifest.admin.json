@@ -1,0 +1,64 @@
+{
+  "version": "1.0",
+  "role": "admin",
+  "modelId": "none",
+  "modelSha256": "none",
+  "dimensions": 0,
+  "items": [
+    {
+      "id": "nav-admin",
+      "targetType": "action",
+      "label": "Admin",
+      "route": "#/admin",
+      "selector": "#nav-admin",
+      "roles": [
+        "admin"
+      ],
+      "source": "manifest"
+    },
+    {
+      "id": "btn-delete-workspace",
+      "targetType": "action",
+      "label": "Delete Workspace",
+      "selector": "#btn-delete-workspace",
+      "roles": [
+        "admin"
+      ],
+      "source": "manifest"
+    },
+    {
+      "id": "btn-purge-db",
+      "targetType": "action",
+      "label": "Purge Database",
+      "selector": "#btn-purge-db",
+      "roles": [
+        "admin"
+      ],
+      "source": "manifest"
+    },
+    {
+      "id": "doc-clause-2af4179d",
+      "targetType": "doc_clause",
+      "label": "Critical administrative actions.",
+      "verbatimText": "Critical administrative actions.",
+      "docUrl": "sandbox\\demo-saas\\index.html",
+      "clauseAnchor": "clause-1",
+      "roles": [
+        "admin"
+      ],
+      "source": "manifest"
+    },
+    {
+      "id": "doc-clause-a777f6e2",
+      "targetType": "doc_clause",
+      "label": "These operations mutate production data permanently.",
+      "verbatimText": "These operations mutate production data permanently.",
+      "docUrl": "sandbox\\demo-saas\\index.html",
+      "clauseAnchor": "clause-2",
+      "roles": [
+        "admin"
+      ],
+      "source": "manifest"
+    }
+  ]
+}

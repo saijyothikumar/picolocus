@@ -1,0 +1,1519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Silent MI - Demo SaaS Workbench</title>
+  <link rel="stylesheet" href="./src/styles.css">
+</head>
+<body>
+  <header>
+    <div class="logo-area">
+      <h1>Silent MI SaaS</h1>
+      <nav>
+        <a href="#/general" id="nav-general" class="nav-link active">General</a>
+        <a href="#/security" id="nav-security" class="nav-link">Security</a>
+        <a href="#/billing" id="nav-billing" class="nav-link">Billing</a>
+        <a href="#/admin" id="nav-admin" class="nav-link" data-mi-roles="admin">Admin</a>
+        <a href="#/privacy" id="nav-privacy" class="nav-link">Privacy Policy</a>
+      </nav>
+    </div>
+    <div class="controls-area">
+      <label for="role-switcher" style="font-size: 0.75rem; color: #94a3b8;">Role:</label>
+      <select id="role-switcher" data-testid="role-switcher">
+        <option value="viewer" selected>Viewer</option>
+        <option value="admin">Admin</option>
+      </select>
+      <label for="tier-switcher" style="font-size: 0.75rem; color: #94a3b8;">Tier:</label>
+      <select id="tier-switcher" data-testid="tier-switcher">
+        <option value="free" selected>Free</option>
+        <option value="pro">Pro</option>
+        <option value="enterprise">Enterprise</option>
+      </select>
+      <div id="ram-telemetry" class="ram-badge" data-testid="ram-telemetry">RAM: -- MB</div>
+    </div>
+  </header>
+
+  <main>
+    <!-- General Settings Tab -->
+    <div id="tab-general" class="tab-pane active">
+      <div class="card">
+        <h2>General Settings</h2>
+        <p>Manage your user account profile and application preferences.</p>
+        <div>
+          <label for="host-text-input" style="display: block; margin-bottom: 0.5rem; font-size: 0.875rem;">Host Text Input (Focus Test):</label>
+          <input id="host-text-input" data-testid="host-text-input" type="text" placeholder="Type here without losing focus..." />
+        </div>
+        <div style="margin-top: 1rem;">
+          <button id="btn-save-profile" class="btn" data-mi-label="Save Profile" data-mi-body="Update display name, avatar, and notification settings">Save Profile</button>
+          <button id="btn-change-password" class="btn" data-mi-label="Change Password" data-mi-body="Modify account password and security questions">Change Password</button>
+          <button id="btn-dark-mode" class="btn btn-secondary" data-mi-label="Toggle Dark Mode" data-mi-body="Switch between light and dark visual themes">Toggle Dark Mode</button>
+          <button id="btn-export-data" class="btn btn-secondary" data-mi-label="Export Data" data-mi-tier="enterprise" data-mi-tier-policy="upsell" data-mi-body="Export full organization audit logs and user data">Export Audit Data</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Security Tab -->
+    <div id="tab-security" class="tab-pane">
+      <div class="card">
+        <h2>Security Settings</h2>
+        <p>Configure authentication, API tokens, and incoming/outgoing webhook listeners.</p>
+        <button id="sec-trigger" data-testid="sec-trigger" class="btn" data-mi-label="Configure Webhooks" data-mi-body="Open security drawer to manage webhook endpoints and secrets">Configure Webhooks</button>
+
+        <!-- 240ms Animated Collapsible Drawer -->
+        <div id="sec-drawer" data-testid="sec-drawer" class="drawer-panel" style="display: none; opacity: 0; max-height: 0;">
+          <h3>Webhook Configuration</h3>
+          <p>Manage real-time subscription delivery destinations.</p>
+          <button id="btn-webhook" data-testid="btn-webhook" class="btn" data-mi-label="Add Webhook Endpoint" data-mi-parent="#sec-trigger" data-mi-body="Register a new webhook listener URL and signing secret">Add Webhook Endpoint</button>
+          <button id="sec-drawer-close" data-testid="sec-drawer-close" class="btn btn-secondary">Close Drawer</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Billing Tab -->
+    <div id="tab-billing" class="tab-pane">
+      <div class="card">
+        <h2>Billing & Invoices</h2>
+        <p>Review customer billing statements, subscription line items, and transaction history.</p>
+        <div class="table-container">
+          <table id="billing-table">
+            <thead>
+              <tr>
+                <th>Invoice ID</th>
+                <th>Customer</th>
+                <th>Amount</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="billing-tbody">
+            <tr id="row-tx-900" data-mi-id="row-tx-900" data-mi-row="true">
+              <td>#TX-900</td>
+              <td>Umbrella Corp</td>
+              <td>$400.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-900" class="btn btn-secondary" data-mi-label="View Invoice #TX-900">View</button></td>
+            </tr>
+            <tr id="row-tx-901" data-mi-id="row-tx-901" data-mi-row="true">
+              <td>#TX-901</td>
+              <td>Hooli</td>
+              <td>$417.00</td>
+              <td><span class="badge pending">Pending</span></td>
+              <td><button id="btn-tx-901" class="btn btn-secondary" data-mi-label="View Invoice #TX-901">View</button></td>
+            </tr>
+            <tr id="row-tx-902" data-mi-id="row-tx-902" data-mi-row="true">
+              <td>#TX-902</td>
+              <td>Pied Piper</td>
+              <td>$434.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-902" class="btn btn-secondary" data-mi-label="View Invoice #TX-902">View</button></td>
+            </tr>
+            <tr id="row-tx-903" data-mi-id="row-tx-903" data-mi-row="true">
+              <td>#TX-903</td>
+              <td>Cyberdyne</td>
+              <td>$451.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-903" class="btn btn-secondary" data-mi-label="View Invoice #TX-903">View</button></td>
+            </tr>
+            <tr id="row-tx-904" data-mi-id="row-tx-904" data-mi-row="true">
+              <td>#TX-904</td>
+              <td>Acme Corp</td>
+              <td>$468.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-904" class="btn btn-secondary" data-mi-label="View Invoice #TX-904">View</button></td>
+            </tr>
+            <tr id="row-tx-905" data-mi-id="row-tx-905" data-mi-row="true">
+              <td>#TX-905</td>
+              <td>Globex</td>
+              <td>$485.00</td>
+              <td><span class="badge pending">Pending</span></td>
+              <td><button id="btn-tx-905" class="btn btn-secondary" data-mi-label="View Invoice #TX-905">View</button></td>
+            </tr>
+            <tr id="row-tx-906" data-mi-id="row-tx-906" data-mi-row="true">
+              <td>#TX-906</td>
+              <td>Soylent Inc</td>
+              <td>$502.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-906" class="btn btn-secondary" data-mi-label="View Invoice #TX-906">View</button></td>
+            </tr>
+            <tr id="row-tx-907" data-mi-id="row-tx-907" data-mi-row="true">
+              <td>#TX-907</td>
+              <td>Initech</td>
+              <td>$519.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-907" class="btn btn-secondary" data-mi-label="View Invoice #TX-907">View</button></td>
+            </tr>
+            <tr id="row-tx-908" data-mi-id="row-tx-908" data-mi-row="true">
+              <td>#TX-908</td>
+              <td>Umbrella Corp</td>
+              <td>$536.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-908" class="btn btn-secondary" data-mi-label="View Invoice #TX-908">View</button></td>
+            </tr>
+            <tr id="row-tx-909" data-mi-id="row-tx-909" data-mi-row="true">
+              <td>#TX-909</td>
+              <td>Hooli</td>
+              <td>$553.00</td>
+              <td><span class="badge pending">Pending</span></td>
+              <td><button id="btn-tx-909" class="btn btn-secondary" data-mi-label="View Invoice #TX-909">View</button></td>
+            </tr>
+            <tr id="row-tx-910" data-mi-id="row-tx-910" data-mi-row="true">
+              <td>#TX-910</td>
+              <td>Pied Piper</td>
+              <td>$570.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-910" class="btn btn-secondary" data-mi-label="View Invoice #TX-910">View</button></td>
+            </tr>
+            <tr id="row-tx-911" data-mi-id="row-tx-911" data-mi-row="true">
+              <td>#TX-911</td>
+              <td>Cyberdyne</td>
+              <td>$587.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-911" class="btn btn-secondary" data-mi-label="View Invoice #TX-911">View</button></td>
+            </tr>
+            <tr id="row-tx-912" data-mi-id="row-tx-912" data-mi-row="true">
+              <td>#TX-912</td>
+              <td>Acme Corp</td>
+              <td>$604.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-912" class="btn btn-secondary" data-mi-label="View Invoice #TX-912">View</button></td>
+            </tr>
+            <tr id="row-tx-913" data-mi-id="row-tx-913" data-mi-row="true">
+              <td>#TX-913</td>
+              <td>Globex</td>
+              <td>$621.00</td>
+              <td><span class="badge pending">Pending</span></td>
+              <td><button id="btn-tx-913" class="btn btn-secondary" data-mi-label="View Invoice #TX-913">View</button></td>
+            </tr>
+            <tr id="row-tx-914" data-mi-id="row-tx-914" data-mi-row="true">
+              <td>#TX-914</td>
+              <td>Soylent Inc</td>
+              <td>$638.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-914" class="btn btn-secondary" data-mi-label="View Invoice #TX-914">View</button></td>
+            </tr>
+            <tr id="row-tx-915" data-mi-id="row-tx-915" data-mi-row="true">
+              <td>#TX-915</td>
+              <td>Initech</td>
+              <td>$655.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-915" class="btn btn-secondary" data-mi-label="View Invoice #TX-915">View</button></td>
+            </tr>
+            <tr id="row-tx-916" data-mi-id="row-tx-916" data-mi-row="true">
+              <td>#TX-916</td>
+              <td>Umbrella Corp</td>
+              <td>$672.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-916" class="btn btn-secondary" data-mi-label="View Invoice #TX-916">View</button></td>
+            </tr>
+            <tr id="row-tx-917" data-mi-id="row-tx-917" data-mi-row="true">
+              <td>#TX-917</td>
+              <td>Hooli</td>
+              <td>$689.00</td>
+              <td><span class="badge pending">Pending</span></td>
+              <td><button id="btn-tx-917" class="btn btn-secondary" data-mi-label="View Invoice #TX-917">View</button></td>
+            </tr>
+            <tr id="row-tx-918" data-mi-id="row-tx-918" data-mi-row="true">
+              <td>#TX-918</td>
+              <td>Pied Piper</td>
+              <td>$706.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-918" class="btn btn-secondary" data-mi-label="View Invoice #TX-918">View</button></td>
+            </tr>
+            <tr id="row-tx-919" data-mi-id="row-tx-919" data-mi-row="true">
+              <td>#TX-919</td>
+              <td>Cyberdyne</td>
+              <td>$723.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-919" class="btn btn-secondary" data-mi-label="View Invoice #TX-919">View</button></td>
+            </tr>
+            <tr id="row-tx-920" data-mi-id="row-tx-920" data-mi-row="true">
+              <td>#TX-920</td>
+              <td>Acme Corp</td>
+              <td>$740.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-920" class="btn btn-secondary" data-mi-label="View Invoice #TX-920">View</button></td>
+            </tr>
+            <tr id="row-tx-921" data-mi-id="row-tx-921" data-mi-row="true">
+              <td>#TX-921</td>
+              <td>Globex</td>
+              <td>$757.00</td>
+              <td><span class="badge pending">Pending</span></td>
+              <td><button id="btn-tx-921" class="btn btn-secondary" data-mi-label="View Invoice #TX-921">View</button></td>
+            </tr>
+            <tr id="row-tx-922" data-mi-id="row-tx-922" data-mi-row="true">
+              <td>#TX-922</td>
+              <td>Soylent Inc</td>
+              <td>$774.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-922" class="btn btn-secondary" data-mi-label="View Invoice #TX-922">View</button></td>
+            </tr>
+            <tr id="row-tx-923" data-mi-id="row-tx-923" data-mi-row="true">
+              <td>#TX-923</td>
+              <td>Initech</td>
+              <td>$791.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-923" class="btn btn-secondary" data-mi-label="View Invoice #TX-923">View</button></td>
+            </tr>
+            <tr id="row-tx-924" data-mi-id="row-tx-924" data-mi-row="true">
+              <td>#TX-924</td>
+              <td>Umbrella Corp</td>
+              <td>$808.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-924" class="btn btn-secondary" data-mi-label="View Invoice #TX-924">View</button></td>
+            </tr>
+            <tr id="row-tx-925" data-mi-id="row-tx-925" data-mi-row="true">
+              <td>#TX-925</td>
+              <td>Hooli</td>
+              <td>$825.00</td>
+              <td><span class="badge pending">Pending</span></td>
+              <td><button id="btn-tx-925" class="btn btn-secondary" data-mi-label="View Invoice #TX-925">View</button></td>
+            </tr>
+            <tr id="row-tx-926" data-mi-id="row-tx-926" data-mi-row="true">
+              <td>#TX-926</td>
+              <td>Pied Piper</td>
+              <td>$842.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-926" class="btn btn-secondary" data-mi-label="View Invoice #TX-926">View</button></td>
+            </tr>
+            <tr id="row-tx-927" data-mi-id="row-tx-927" data-mi-row="true">
+              <td>#TX-927</td>
+              <td>Cyberdyne</td>
+              <td>$859.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-927" class="btn btn-secondary" data-mi-label="View Invoice #TX-927">View</button></td>
+            </tr>
+            <tr id="row-tx-928" data-mi-id="row-tx-928" data-mi-row="true">
+              <td>#TX-928</td>
+              <td>Acme Corp</td>
+              <td>$876.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-928" class="btn btn-secondary" data-mi-label="View Invoice #TX-928">View</button></td>
+            </tr>
+            <tr id="row-tx-929" data-mi-id="row-tx-929" data-mi-row="true">
+              <td>#TX-929</td>
+              <td>Globex</td>
+              <td>$893.00</td>
+              <td><span class="badge pending">Pending</span></td>
+              <td><button id="btn-tx-929" class="btn btn-secondary" data-mi-label="View Invoice #TX-929">View</button></td>
+            </tr>
+            <tr id="row-tx-930" data-mi-id="row-tx-930" data-mi-row="true">
+              <td>#TX-930</td>
+              <td>Soylent Inc</td>
+              <td>$910.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-930" class="btn btn-secondary" data-mi-label="View Invoice #TX-930">View</button></td>
+            </tr>
+            <tr id="row-tx-931" data-mi-id="row-tx-931" data-mi-row="true">
+              <td>#TX-931</td>
+              <td>Initech</td>
+              <td>$927.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-931" class="btn btn-secondary" data-mi-label="View Invoice #TX-931">View</button></td>
+            </tr>
+            <tr id="row-tx-932" data-mi-id="row-tx-932" data-mi-row="true">
+              <td>#TX-932</td>
+              <td>Umbrella Corp</td>
+              <td>$944.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-932" class="btn btn-secondary" data-mi-label="View Invoice #TX-932">View</button></td>
+            </tr>
+            <tr id="row-tx-933" data-mi-id="row-tx-933" data-mi-row="true">
+              <td>#TX-933</td>
+              <td>Hooli</td>
+              <td>$961.00</td>
+              <td><span class="badge pending">Pending</span></td>
+              <td><button id="btn-tx-933" class="btn btn-secondary" data-mi-label="View Invoice #TX-933">View</button></td>
+            </tr>
+            <tr id="row-tx-934" data-mi-id="row-tx-934" data-mi-row="true">
+              <td>#TX-934</td>
+              <td>Pied Piper</td>
+              <td>$978.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-934" class="btn btn-secondary" data-mi-label="View Invoice #TX-934">View</button></td>
+            </tr>
+            <tr id="row-tx-935" data-mi-id="row-tx-935" data-mi-row="true">
+              <td>#TX-935</td>
+              <td>Cyberdyne</td>
+              <td>$995.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-935" class="btn btn-secondary" data-mi-label="View Invoice #TX-935">View</button></td>
+            </tr>
+            <tr id="row-tx-936" data-mi-id="row-tx-936" data-mi-row="true">
+              <td>#TX-936</td>
+              <td>Acme Corp</td>
+              <td>$1,012.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-936" class="btn btn-secondary" data-mi-label="View Invoice #TX-936">View</button></td>
+            </tr>
+            <tr id="row-tx-937" data-mi-id="row-tx-937" data-mi-row="true">
+              <td>#TX-937</td>
+              <td>Globex</td>
+              <td>$1,029.00</td>
+              <td><span class="badge pending">Pending</span></td>
+              <td><button id="btn-tx-937" class="btn btn-secondary" data-mi-label="View Invoice #TX-937">View</button></td>
+            </tr>
+            <tr id="row-tx-938" data-mi-id="row-tx-938" data-mi-row="true">
+              <td>#TX-938</td>
+              <td>Soylent Inc</td>
+              <td>$1,046.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-938" class="btn btn-secondary" data-mi-label="View Invoice #TX-938">View</button></td>
+            </tr>
+            <tr id="row-tx-939" data-mi-id="row-tx-939" data-mi-row="true">
+              <td>#TX-939</td>
+              <td>Initech</td>
+              <td>$1,063.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-939" class="btn btn-secondary" data-mi-label="View Invoice #TX-939">View</button></td>
+            </tr>
+            <tr id="row-tx-940" data-mi-id="row-tx-940" data-mi-row="true">
+              <td>#TX-940</td>
+              <td>Umbrella Corp</td>
+              <td>$1,080.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-940" class="btn btn-secondary" data-mi-label="View Invoice #TX-940">View</button></td>
+            </tr>
+            <tr id="row-tx-941" data-mi-id="row-tx-941" data-mi-row="true">
+              <td>#TX-941</td>
+              <td>Hooli</td>
+              <td>$1,097.00</td>
+              <td><span class="badge pending">Pending</span></td>
+              <td><button id="btn-tx-941" class="btn btn-secondary" data-mi-label="View Invoice #TX-941">View</button></td>
+            </tr>
+            <tr id="row-tx-942" data-mi-id="row-tx-942" data-mi-row="true">
+              <td>#TX-942</td>
+              <td>Pied Piper</td>
+              <td>$1,114.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-942" class="btn btn-secondary" data-mi-label="View Invoice #TX-942">View</button></td>
+            </tr>
+            <tr id="row-tx-943" data-mi-id="row-tx-943" data-mi-row="true">
+              <td>#TX-943</td>
+              <td>Cyberdyne</td>
+              <td>$1,131.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-943" class="btn btn-secondary" data-mi-label="View Invoice #TX-943">View</button></td>
+            </tr>
+            <tr id="row-tx-944" data-mi-id="row-tx-944" data-mi-row="true">
+              <td>#TX-944</td>
+              <td>Acme Corp</td>
+              <td>$1,148.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-944" class="btn btn-secondary" data-mi-label="View Invoice #TX-944">View</button></td>
+            </tr>
+            <tr id="row-tx-945" data-mi-id="row-tx-945" data-mi-row="true">
+              <td>#TX-945</td>
+              <td>Globex</td>
+              <td>$1,165.00</td>
+              <td><span class="badge pending">Pending</span></td>
+              <td><button id="btn-tx-945" class="btn btn-secondary" data-mi-label="View Invoice #TX-945">View</button></td>
+            </tr>
+            <tr id="row-tx-946" data-mi-id="row-tx-946" data-mi-row="true">
+              <td>#TX-946</td>
+              <td>Soylent Inc</td>
+              <td>$1,182.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-946" class="btn btn-secondary" data-mi-label="View Invoice #TX-946">View</button></td>
+            </tr>
+            <tr id="row-tx-947" data-mi-id="row-tx-947" data-mi-row="true">
+              <td>#TX-947</td>
+              <td>Initech</td>
+              <td>$1,199.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-947" class="btn btn-secondary" data-mi-label="View Invoice #TX-947">View</button></td>
+            </tr>
+            <tr id="row-tx-948" data-mi-id="row-tx-948" data-mi-row="true">
+              <td>#TX-948</td>
+              <td>Umbrella Corp</td>
+              <td>$1,216.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-948" class="btn btn-secondary" data-mi-label="View Invoice #TX-948">View</button></td>
+            </tr>
+            <tr id="row-tx-949" data-mi-id="row-tx-949" data-mi-row="true">
+              <td>#TX-949</td>
+              <td>Hooli</td>
+              <td>$1,233.00</td>
+              <td><span class="badge pending">Pending</span></td>
+              <td><button id="btn-tx-949" class="btn btn-secondary" data-mi-label="View Invoice #TX-949">View</button></td>
+            </tr>
+            <tr id="row-tx-950" data-mi-id="row-tx-950" data-mi-row="true">
+              <td>#TX-950</td>
+              <td>Pied Piper</td>
+              <td>$1,250.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-950" class="btn btn-secondary" data-mi-label="View Invoice #TX-950">View</button></td>
+            </tr>
+            <tr id="row-tx-951" data-mi-id="row-tx-951" data-mi-row="true">
+              <td>#TX-951</td>
+              <td>Cyberdyne</td>
+              <td>$1,267.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-951" class="btn btn-secondary" data-mi-label="View Invoice #TX-951">View</button></td>
+            </tr>
+            <tr id="row-tx-952" data-mi-id="row-tx-952" data-mi-row="true">
+              <td>#TX-952</td>
+              <td>Acme Corp</td>
+              <td>$1,284.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-952" class="btn btn-secondary" data-mi-label="View Invoice #TX-952">View</button></td>
+            </tr>
+            <tr id="row-tx-953" data-mi-id="row-tx-953" data-mi-row="true">
+              <td>#TX-953</td>
+              <td>Globex</td>
+              <td>$1,301.00</td>
+              <td><span class="badge pending">Pending</span></td>
+              <td><button id="btn-tx-953" class="btn btn-secondary" data-mi-label="View Invoice #TX-953">View</button></td>
+            </tr>
+            <tr id="row-tx-954" data-mi-id="row-tx-954" data-mi-row="true">
+              <td>#TX-954</td>
+              <td>Soylent Inc</td>
+              <td>$1,318.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-954" class="btn btn-secondary" data-mi-label="View Invoice #TX-954">View</button></td>
+            </tr>
+            <tr id="row-tx-955" data-mi-id="row-tx-955" data-mi-row="true">
+              <td>#TX-955</td>
+              <td>Initech</td>
+              <td>$1,335.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-955" class="btn btn-secondary" data-mi-label="View Invoice #TX-955">View</button></td>
+            </tr>
+            <tr id="row-tx-956" data-mi-id="row-tx-956" data-mi-row="true">
+              <td>#TX-956</td>
+              <td>Umbrella Corp</td>
+              <td>$1,352.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-956" class="btn btn-secondary" data-mi-label="View Invoice #TX-956">View</button></td>
+            </tr>
+            <tr id="row-tx-957" data-mi-id="row-tx-957" data-mi-row="true">
+              <td>#TX-957</td>
+              <td>Hooli</td>
+              <td>$1,369.00</td>
+              <td><span class="badge pending">Pending</span></td>
+              <td><button id="btn-tx-957" class="btn btn-secondary" data-mi-label="View Invoice #TX-957">View</button></td>
+            </tr>
+            <tr id="row-tx-958" data-mi-id="row-tx-958" data-mi-row="true">
+              <td>#TX-958</td>
+              <td>Pied Piper</td>
+              <td>$1,386.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-958" class="btn btn-secondary" data-mi-label="View Invoice #TX-958">View</button></td>
+            </tr>
+            <tr id="row-tx-959" data-mi-id="row-tx-959" data-mi-row="true">
+              <td>#TX-959</td>
+              <td>Cyberdyne</td>
+              <td>$1,403.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-959" class="btn btn-secondary" data-mi-label="View Invoice #TX-959">View</button></td>
+            </tr>
+            <tr id="row-tx-960" data-mi-id="row-tx-960" data-mi-row="true">
+              <td>#TX-960</td>
+              <td>Acme Corp</td>
+              <td>$1,420.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-960" class="btn btn-secondary" data-mi-label="View Invoice #TX-960">View</button></td>
+            </tr>
+            <tr id="row-tx-961" data-mi-id="row-tx-961" data-mi-row="true">
+              <td>#TX-961</td>
+              <td>Globex</td>
+              <td>$1,437.00</td>
+              <td><span class="badge pending">Pending</span></td>
+              <td><button id="btn-tx-961" class="btn btn-secondary" data-mi-label="View Invoice #TX-961">View</button></td>
+            </tr>
+            <tr id="row-tx-962" data-mi-id="row-tx-962" data-mi-row="true">
+              <td>#TX-962</td>
+              <td>Soylent Inc</td>
+              <td>$1,454.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-962" class="btn btn-secondary" data-mi-label="View Invoice #TX-962">View</button></td>
+            </tr>
+            <tr id="row-tx-963" data-mi-id="row-tx-963" data-mi-row="true">
+              <td>#TX-963</td>
+              <td>Initech</td>
+              <td>$1,471.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-963" class="btn btn-secondary" data-mi-label="View Invoice #TX-963">View</button></td>
+            </tr>
+            <tr id="row-tx-964" data-mi-id="row-tx-964" data-mi-row="true">
+              <td>#TX-964</td>
+              <td>Umbrella Corp</td>
+              <td>$1,488.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-964" class="btn btn-secondary" data-mi-label="View Invoice #TX-964">View</button></td>
+            </tr>
+            <tr id="row-tx-965" data-mi-id="row-tx-965" data-mi-row="true">
+              <td>#TX-965</td>
+              <td>Hooli</td>
+              <td>$1,505.00</td>
+              <td><span class="badge pending">Pending</span></td>
+              <td><button id="btn-tx-965" class="btn btn-secondary" data-mi-label="View Invoice #TX-965">View</button></td>
+            </tr>
+            <tr id="row-tx-966" data-mi-id="row-tx-966" data-mi-row="true">
+              <td>#TX-966</td>
+              <td>Pied Piper</td>
+              <td>$1,522.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-966" class="btn btn-secondary" data-mi-label="View Invoice #TX-966">View</button></td>
+            </tr>
+            <tr id="row-tx-967" data-mi-id="row-tx-967" data-mi-row="true">
+              <td>#TX-967</td>
+              <td>Cyberdyne</td>
+              <td>$1,539.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-967" class="btn btn-secondary" data-mi-label="View Invoice #TX-967">View</button></td>
+            </tr>
+            <tr id="row-tx-968" data-mi-id="row-tx-968" data-mi-row="true">
+              <td>#TX-968</td>
+              <td>Acme Corp</td>
+              <td>$1,556.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-968" class="btn btn-secondary" data-mi-label="View Invoice #TX-968">View</button></td>
+            </tr>
+            <tr id="row-tx-969" data-mi-id="row-tx-969" data-mi-row="true">
+              <td>#TX-969</td>
+              <td>Globex</td>
+              <td>$1,573.00</td>
+              <td><span class="badge pending">Pending</span></td>
+              <td><button id="btn-tx-969" class="btn btn-secondary" data-mi-label="View Invoice #TX-969">View</button></td>
+            </tr>
+            <tr id="row-tx-970" data-mi-id="row-tx-970" data-mi-row="true">
+              <td>#TX-970</td>
+              <td>Soylent Inc</td>
+              <td>$1,590.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-970" class="btn btn-secondary" data-mi-label="View Invoice #TX-970">View</button></td>
+            </tr>
+            <tr id="row-tx-971" data-mi-id="row-tx-971" data-mi-row="true">
+              <td>#TX-971</td>
+              <td>Initech</td>
+              <td>$1,607.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-971" class="btn btn-secondary" data-mi-label="View Invoice #TX-971">View</button></td>
+            </tr>
+            <tr id="row-tx-972" data-mi-id="row-tx-972" data-mi-row="true">
+              <td>#TX-972</td>
+              <td>Umbrella Corp</td>
+              <td>$1,624.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-972" class="btn btn-secondary" data-mi-label="View Invoice #TX-972">View</button></td>
+            </tr>
+            <tr id="row-tx-973" data-mi-id="row-tx-973" data-mi-row="true">
+              <td>#TX-973</td>
+              <td>Hooli</td>
+              <td>$1,641.00</td>
+              <td><span class="badge pending">Pending</span></td>
+              <td><button id="btn-tx-973" class="btn btn-secondary" data-mi-label="View Invoice #TX-973">View</button></td>
+            </tr>
+            <tr id="row-tx-974" data-mi-id="row-tx-974" data-mi-row="true">
+              <td>#TX-974</td>
+              <td>Pied Piper</td>
+              <td>$1,658.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-974" class="btn btn-secondary" data-mi-label="View Invoice #TX-974">View</button></td>
+            </tr>
+            <tr id="row-tx-975" data-mi-id="row-tx-975" data-mi-row="true">
+              <td>#TX-975</td>
+              <td>Cyberdyne</td>
+              <td>$1,675.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-975" class="btn btn-secondary" data-mi-label="View Invoice #TX-975">View</button></td>
+            </tr>
+            <tr id="row-tx-976" data-mi-id="row-tx-976" data-mi-row="true">
+              <td>#TX-976</td>
+              <td>Acme Corp</td>
+              <td>$1,692.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-976" class="btn btn-secondary" data-mi-label="View Invoice #TX-976">View</button></td>
+            </tr>
+            <tr id="row-tx-977" data-mi-id="row-tx-977" data-mi-row="true">
+              <td>#TX-977</td>
+              <td>Globex</td>
+              <td>$1,709.00</td>
+              <td><span class="badge pending">Pending</span></td>
+              <td><button id="btn-tx-977" class="btn btn-secondary" data-mi-label="View Invoice #TX-977">View</button></td>
+            </tr>
+            <tr id="row-tx-978" data-mi-id="row-tx-978" data-mi-row="true">
+              <td>#TX-978</td>
+              <td>Soylent Inc</td>
+              <td>$1,726.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-978" class="btn btn-secondary" data-mi-label="View Invoice #TX-978">View</button></td>
+            </tr>
+            <tr id="row-tx-979" data-mi-id="row-tx-979" data-mi-row="true">
+              <td>#TX-979</td>
+              <td>Initech</td>
+              <td>$1,743.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-979" class="btn btn-secondary" data-mi-label="View Invoice #TX-979">View</button></td>
+            </tr>
+            <tr id="row-tx-980" data-mi-id="row-tx-980" data-mi-row="true">
+              <td>#TX-980</td>
+              <td>Umbrella Corp</td>
+              <td>$1,760.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-980" class="btn btn-secondary" data-mi-label="View Invoice #TX-980">View</button></td>
+            </tr>
+            <tr id="row-tx-981" data-mi-id="row-tx-981" data-mi-row="true">
+              <td>#TX-981</td>
+              <td>Hooli</td>
+              <td>$1,777.00</td>
+              <td><span class="badge pending">Pending</span></td>
+              <td><button id="btn-tx-981" class="btn btn-secondary" data-mi-label="View Invoice #TX-981">View</button></td>
+            </tr>
+            <tr id="row-tx-982" data-mi-id="row-tx-982" data-mi-row="true">
+              <td>#TX-982</td>
+              <td>Pied Piper</td>
+              <td>$1,794.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-982" class="btn btn-secondary" data-mi-label="View Invoice #TX-982">View</button></td>
+            </tr>
+            <tr id="row-tx-983" data-mi-id="row-tx-983" data-mi-row="true">
+              <td>#TX-983</td>
+              <td>Cyberdyne</td>
+              <td>$1,811.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-983" class="btn btn-secondary" data-mi-label="View Invoice #TX-983">View</button></td>
+            </tr>
+            <tr id="row-tx-984" data-mi-id="row-tx-984" data-mi-row="true">
+              <td>#TX-984</td>
+              <td>Acme Corp</td>
+              <td>$1,828.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-984" class="btn btn-secondary" data-mi-label="View Invoice #TX-984">View</button></td>
+            </tr>
+            <tr id="row-tx-985" data-mi-id="row-tx-985" data-mi-row="true">
+              <td>#TX-985</td>
+              <td>Globex</td>
+              <td>$1,845.00</td>
+              <td><span class="badge pending">Pending</span></td>
+              <td><button id="btn-tx-985" class="btn btn-secondary" data-mi-label="View Invoice #TX-985">View</button></td>
+            </tr>
+            <tr id="row-tx-986" data-mi-id="row-tx-986" data-mi-row="true">
+              <td>#TX-986</td>
+              <td>Soylent Inc</td>
+              <td>$1,862.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-986" class="btn btn-secondary" data-mi-label="View Invoice #TX-986">View</button></td>
+            </tr>
+            <tr id="row-tx-987" data-mi-id="row-tx-987" data-mi-row="true">
+              <td>#TX-987</td>
+              <td>Initech</td>
+              <td>$1,879.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-987" class="btn btn-secondary" data-mi-label="View Invoice #TX-987">View</button></td>
+            </tr>
+            <tr id="row-tx-988" data-mi-id="row-tx-988" data-mi-row="true">
+              <td>#TX-988</td>
+              <td>Umbrella Corp</td>
+              <td>$1,896.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-988" class="btn btn-secondary" data-mi-label="View Invoice #TX-988">View</button></td>
+            </tr>
+            <tr id="row-tx-989" data-mi-id="row-tx-989" data-mi-row="true">
+              <td>#TX-989</td>
+              <td>Hooli</td>
+              <td>$1,913.00</td>
+              <td><span class="badge pending">Pending</span></td>
+              <td><button id="btn-tx-989" class="btn btn-secondary" data-mi-label="View Invoice #TX-989">View</button></td>
+            </tr>
+            <tr id="row-tx-990" data-mi-id="row-tx-990" data-mi-row="true">
+              <td>#TX-990</td>
+              <td>Pied Piper</td>
+              <td>$1,930.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-990" class="btn btn-secondary" data-mi-label="View Invoice #TX-990">View</button></td>
+            </tr>
+            <tr id="row-tx-991" data-mi-id="row-tx-991" data-mi-row="true">
+              <td>#TX-991</td>
+              <td>Cyberdyne</td>
+              <td>$1,947.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-991" class="btn btn-secondary" data-mi-label="View Invoice #TX-991">View</button></td>
+            </tr>
+            <tr id="row-tx-992" data-mi-id="row-tx-992" data-mi-row="true">
+              <td>#TX-992</td>
+              <td>Acme Corp</td>
+              <td>$1,964.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-992" class="btn btn-secondary" data-mi-label="View Invoice #TX-992">View</button></td>
+            </tr>
+            <tr id="row-tx-993" data-mi-id="row-tx-993" data-mi-row="true">
+              <td>#TX-993</td>
+              <td>Globex</td>
+              <td>$1,981.00</td>
+              <td><span class="badge pending">Pending</span></td>
+              <td><button id="btn-tx-993" class="btn btn-secondary" data-mi-label="View Invoice #TX-993">View</button></td>
+            </tr>
+            <tr id="row-tx-994" data-mi-id="row-tx-994" data-mi-row="true">
+              <td>#TX-994</td>
+              <td>Soylent Inc</td>
+              <td>$1,998.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-994" class="btn btn-secondary" data-mi-label="View Invoice #TX-994">View</button></td>
+            </tr>
+            <tr id="row-tx-995" data-mi-id="row-tx-995" data-mi-row="true">
+              <td>#TX-995</td>
+              <td>Initech</td>
+              <td>$2,015.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-995" class="btn btn-secondary" data-mi-label="View Invoice #TX-995">View</button></td>
+            </tr>
+            <tr id="row-tx-996" data-mi-id="row-tx-996" data-mi-row="true">
+              <td>#TX-996</td>
+              <td>Umbrella Corp</td>
+              <td>$2,032.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-996" class="btn btn-secondary" data-mi-label="View Invoice #TX-996">View</button></td>
+            </tr>
+            <tr id="row-tx-997" data-mi-id="row-tx-997" data-mi-row="true">
+              <td>#TX-997</td>
+              <td>Hooli</td>
+              <td>$2,049.00</td>
+              <td><span class="badge pending">Pending</span></td>
+              <td><button id="btn-tx-997" class="btn btn-secondary" data-mi-label="View Invoice #TX-997">View</button></td>
+            </tr>
+            <tr id="row-tx-998" data-mi-id="row-tx-998" data-mi-row="true">
+              <td>#TX-998</td>
+              <td>Pied Piper</td>
+              <td>$2,066.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-998" class="btn btn-secondary" data-mi-label="View Invoice #TX-998">View</button></td>
+            </tr>
+            <tr id="row-tx-999" data-mi-id="row-tx-999" data-mi-row="true">
+              <td>#TX-999</td>
+              <td>Cyberdyne</td>
+              <td>$2,083.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-999" class="btn btn-secondary" data-mi-label="View Invoice #TX-999">View</button></td>
+            </tr>
+            <tr id="row-tx-1000" data-mi-id="row-tx-1000" data-mi-row="true">
+              <td>#TX-1000</td>
+              <td>Acme Corp</td>
+              <td>$2,100.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-1000" class="btn btn-secondary" data-mi-label="View Invoice #TX-1000">View</button></td>
+            </tr>
+            <tr id="row-tx-1001" data-mi-id="row-tx-1001" data-mi-row="true">
+              <td>#TX-1001</td>
+              <td>Globex</td>
+              <td>$2,117.00</td>
+              <td><span class="badge pending">Pending</span></td>
+              <td><button id="btn-tx-1001" class="btn btn-secondary" data-mi-label="View Invoice #TX-1001">View</button></td>
+            </tr>
+            <tr id="row-tx-1002" data-mi-id="row-tx-1002" data-mi-row="true">
+              <td>#TX-1002</td>
+              <td>Soylent Inc</td>
+              <td>$2,134.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-1002" class="btn btn-secondary" data-mi-label="View Invoice #TX-1002">View</button></td>
+            </tr>
+            <tr id="row-tx-1003" data-mi-id="row-tx-1003" data-mi-row="true">
+              <td>#TX-1003</td>
+              <td>Initech</td>
+              <td>$2,151.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-1003" class="btn btn-secondary" data-mi-label="View Invoice #TX-1003">View</button></td>
+            </tr>
+            <tr id="row-tx-1004" data-mi-id="row-tx-1004" data-mi-row="true">
+              <td>#TX-1004</td>
+              <td>Umbrella Corp</td>
+              <td>$2,168.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-1004" class="btn btn-secondary" data-mi-label="View Invoice #TX-1004">View</button></td>
+            </tr>
+            <tr id="row-tx-1005" data-mi-id="row-tx-1005" data-mi-row="true">
+              <td>#TX-1005</td>
+              <td>Hooli</td>
+              <td>$2,185.00</td>
+              <td><span class="badge pending">Pending</span></td>
+              <td><button id="btn-tx-1005" class="btn btn-secondary" data-mi-label="View Invoice #TX-1005">View</button></td>
+            </tr>
+            <tr id="row-tx-1006" data-mi-id="row-tx-1006" data-mi-row="true">
+              <td>#TX-1006</td>
+              <td>Pied Piper</td>
+              <td>$2,202.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-1006" class="btn btn-secondary" data-mi-label="View Invoice #TX-1006">View</button></td>
+            </tr>
+            <tr id="row-tx-1007" data-mi-id="row-tx-1007" data-mi-row="true">
+              <td>#TX-1007</td>
+              <td>Cyberdyne</td>
+              <td>$2,219.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-1007" class="btn btn-secondary" data-mi-label="View Invoice #TX-1007">View</button></td>
+            </tr>
+            <tr id="row-tx-1008" data-mi-id="row-tx-1008" data-mi-row="true">
+              <td>#TX-1008</td>
+              <td>Acme Corp</td>
+              <td>$2,236.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-1008" class="btn btn-secondary" data-mi-label="View Invoice #TX-1008">View</button></td>
+            </tr>
+            <tr id="row-tx-1009" data-mi-id="row-tx-1009" data-mi-row="true">
+              <td>#TX-1009</td>
+              <td>Globex</td>
+              <td>$2,253.00</td>
+              <td><span class="badge pending">Pending</span></td>
+              <td><button id="btn-tx-1009" class="btn btn-secondary" data-mi-label="View Invoice #TX-1009">View</button></td>
+            </tr>
+            <tr id="row-tx-1010" data-mi-id="row-tx-1010" data-mi-row="true">
+              <td>#TX-1010</td>
+              <td>Soylent Inc</td>
+              <td>$2,270.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-1010" class="btn btn-secondary" data-mi-label="View Invoice #TX-1010">View</button></td>
+            </tr>
+            <tr id="row-tx-1011" data-mi-id="row-tx-1011" data-mi-row="true">
+              <td>#TX-1011</td>
+              <td>Initech</td>
+              <td>$2,287.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-1011" class="btn btn-secondary" data-mi-label="View Invoice #TX-1011">View</button></td>
+            </tr>
+            <tr id="row-tx-1012" data-mi-id="row-tx-1012" data-mi-row="true">
+              <td>#TX-1012</td>
+              <td>Umbrella Corp</td>
+              <td>$2,304.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-1012" class="btn btn-secondary" data-mi-label="View Invoice #TX-1012">View</button></td>
+            </tr>
+            <tr id="row-tx-1013" data-mi-id="row-tx-1013" data-mi-row="true">
+              <td>#TX-1013</td>
+              <td>Hooli</td>
+              <td>$2,321.00</td>
+              <td><span class="badge pending">Pending</span></td>
+              <td><button id="btn-tx-1013" class="btn btn-secondary" data-mi-label="View Invoice #TX-1013">View</button></td>
+            </tr>
+            <tr id="row-tx-1014" data-mi-id="row-tx-1014" data-mi-row="true">
+              <td>#TX-1014</td>
+              <td>Pied Piper</td>
+              <td>$2,338.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-1014" class="btn btn-secondary" data-mi-label="View Invoice #TX-1014">View</button></td>
+            </tr>
+            <tr id="row-tx-1015" data-mi-id="row-tx-1015" data-mi-row="true">
+              <td>#TX-1015</td>
+              <td>Cyberdyne</td>
+              <td>$2,355.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-1015" class="btn btn-secondary" data-mi-label="View Invoice #TX-1015">View</button></td>
+            </tr>
+            <tr id="row-tx-1016" data-mi-id="row-tx-1016" data-mi-row="true">
+              <td>#TX-1016</td>
+              <td>Acme Corp</td>
+              <td>$2,372.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-1016" class="btn btn-secondary" data-mi-label="View Invoice #TX-1016">View</button></td>
+            </tr>
+            <tr id="row-tx-1017" data-mi-id="row-tx-1017" data-mi-row="true">
+              <td>#TX-1017</td>
+              <td>Globex</td>
+              <td>$2,389.00</td>
+              <td><span class="badge pending">Pending</span></td>
+              <td><button id="btn-tx-1017" class="btn btn-secondary" data-mi-label="View Invoice #TX-1017">View</button></td>
+            </tr>
+            <tr id="row-tx-1018" data-mi-id="row-tx-1018" data-mi-row="true">
+              <td>#TX-1018</td>
+              <td>Soylent Inc</td>
+              <td>$2,406.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-1018" class="btn btn-secondary" data-mi-label="View Invoice #TX-1018">View</button></td>
+            </tr>
+            <tr id="row-tx-1019" data-mi-id="row-tx-1019" data-mi-row="true">
+              <td>#TX-1019</td>
+              <td>Initech</td>
+              <td>$2,423.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-1019" class="btn btn-secondary" data-mi-label="View Invoice #TX-1019">View</button></td>
+            </tr>
+            <tr id="row-tx-1020" data-mi-id="row-tx-1020" data-mi-row="true">
+              <td>#TX-1020</td>
+              <td>Umbrella Corp</td>
+              <td>$2,440.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-1020" class="btn btn-secondary" data-mi-label="View Invoice #TX-1020">View</button></td>
+            </tr>
+            <tr id="row-tx-1021" data-mi-id="row-tx-1021" data-mi-row="true">
+              <td>#TX-1021</td>
+              <td>Hooli</td>
+              <td>$2,457.00</td>
+              <td><span class="badge pending">Pending</span></td>
+              <td><button id="btn-tx-1021" class="btn btn-secondary" data-mi-label="View Invoice #TX-1021">View</button></td>
+            </tr>
+            <tr id="row-tx-1022" data-mi-id="row-tx-1022" data-mi-row="true">
+              <td>#TX-1022</td>
+              <td>Pied Piper</td>
+              <td>$2,474.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-1022" class="btn btn-secondary" data-mi-label="View Invoice #TX-1022">View</button></td>
+            </tr>
+            <tr id="row-tx-1023" data-mi-id="row-tx-1023" data-mi-row="true">
+              <td>#TX-1023</td>
+              <td>Cyberdyne</td>
+              <td>$2,491.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-1023" class="btn btn-secondary" data-mi-label="View Invoice #TX-1023">View</button></td>
+            </tr>
+            <tr id="row-tx-1024" data-mi-id="row-tx-1024" data-mi-row="true">
+              <td>#TX-1024</td>
+              <td>Acme Corp</td>
+              <td>$2,508.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-1024" class="btn btn-secondary" data-mi-label="View Invoice #TX-1024">View</button></td>
+            </tr>
+            <tr id="row-tx-1025" data-mi-id="row-tx-1025" data-mi-row="true">
+              <td>#TX-1025</td>
+              <td>Globex</td>
+              <td>$2,525.00</td>
+              <td><span class="badge pending">Pending</span></td>
+              <td><button id="btn-tx-1025" class="btn btn-secondary" data-mi-label="View Invoice #TX-1025">View</button></td>
+            </tr>
+            <tr id="row-tx-1026" data-mi-id="row-tx-1026" data-mi-row="true">
+              <td>#TX-1026</td>
+              <td>Soylent Inc</td>
+              <td>$2,542.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-1026" class="btn btn-secondary" data-mi-label="View Invoice #TX-1026">View</button></td>
+            </tr>
+            <tr id="row-tx-1027" data-mi-id="row-tx-1027" data-mi-row="true">
+              <td>#TX-1027</td>
+              <td>Initech</td>
+              <td>$2,559.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-1027" class="btn btn-secondary" data-mi-label="View Invoice #TX-1027">View</button></td>
+            </tr>
+            <tr id="row-tx-1028" data-mi-id="row-tx-1028" data-mi-row="true">
+              <td>#TX-1028</td>
+              <td>Umbrella Corp</td>
+              <td>$2,576.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-1028" class="btn btn-secondary" data-mi-label="View Invoice #TX-1028">View</button></td>
+            </tr>
+            <tr id="row-tx-1029" data-mi-id="row-tx-1029" data-mi-row="true">
+              <td>#TX-1029</td>
+              <td>Hooli</td>
+              <td>$2,593.00</td>
+              <td><span class="badge pending">Pending</span></td>
+              <td><button id="btn-tx-1029" class="btn btn-secondary" data-mi-label="View Invoice #TX-1029">View</button></td>
+            </tr>
+            <tr id="row-tx-1030" data-mi-id="row-tx-1030" data-mi-row="true">
+              <td>#TX-1030</td>
+              <td>Pied Piper</td>
+              <td>$110.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-1030" class="btn btn-secondary" data-mi-label="View Invoice #TX-1030">View</button></td>
+            </tr>
+            <tr id="row-tx-1031" data-mi-id="row-tx-1031" data-mi-row="true">
+              <td>#TX-1031</td>
+              <td>Cyberdyne</td>
+              <td>$127.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-1031" class="btn btn-secondary" data-mi-label="View Invoice #TX-1031">View</button></td>
+            </tr>
+            <tr id="row-tx-1032" data-mi-id="row-tx-1032" data-mi-row="true">
+              <td>#TX-1032</td>
+              <td>Acme Corp</td>
+              <td>$144.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-1032" class="btn btn-secondary" data-mi-label="View Invoice #TX-1032">View</button></td>
+            </tr>
+            <tr id="row-tx-1033" data-mi-id="row-tx-1033" data-mi-row="true">
+              <td>#TX-1033</td>
+              <td>Globex</td>
+              <td>$161.00</td>
+              <td><span class="badge pending">Pending</span></td>
+              <td><button id="btn-tx-1033" class="btn btn-secondary" data-mi-label="View Invoice #TX-1033">View</button></td>
+            </tr>
+            <tr id="row-tx-1034" data-mi-id="row-tx-1034" data-mi-row="true">
+              <td>#TX-1034</td>
+              <td>Soylent Inc</td>
+              <td>$178.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-1034" class="btn btn-secondary" data-mi-label="View Invoice #TX-1034">View</button></td>
+            </tr>
+            <tr id="row-tx-1035" data-mi-id="row-tx-1035" data-mi-row="true">
+              <td>#TX-1035</td>
+              <td>Initech</td>
+              <td>$195.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-1035" class="btn btn-secondary" data-mi-label="View Invoice #TX-1035">View</button></td>
+            </tr>
+            <tr id="row-tx-1036" data-mi-id="row-tx-1036" data-mi-row="true">
+              <td>#TX-1036</td>
+              <td>Umbrella Corp</td>
+              <td>$212.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-1036" class="btn btn-secondary" data-mi-label="View Invoice #TX-1036">View</button></td>
+            </tr>
+            <tr id="row-tx-1037" data-mi-id="row-tx-1037" data-mi-row="true">
+              <td>#TX-1037</td>
+              <td>Hooli</td>
+              <td>$229.00</td>
+              <td><span class="badge pending">Pending</span></td>
+              <td><button id="btn-tx-1037" class="btn btn-secondary" data-mi-label="View Invoice #TX-1037">View</button></td>
+            </tr>
+            <tr id="row-tx-1038" data-mi-id="row-tx-1038" data-mi-row="true">
+              <td>#TX-1038</td>
+              <td>Pied Piper</td>
+              <td>$246.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-1038" class="btn btn-secondary" data-mi-label="View Invoice #TX-1038">View</button></td>
+            </tr>
+            <tr id="row-tx-1039" data-mi-id="row-tx-1039" data-mi-row="true">
+              <td>#TX-1039</td>
+              <td>Cyberdyne</td>
+              <td>$263.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-1039" class="btn btn-secondary" data-mi-label="View Invoice #TX-1039">View</button></td>
+            </tr>
+            <tr id="row-tx-1040" data-mi-id="row-tx-1040" data-mi-row="true">
+              <td>#TX-1040</td>
+              <td>Acme Corp</td>
+              <td>$280.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-1040" class="btn btn-secondary" data-mi-label="View Invoice #TX-1040">View</button></td>
+            </tr>
+            <tr id="row-tx-1041" data-mi-id="row-tx-1041" data-mi-row="true">
+              <td>#TX-1041</td>
+              <td>Globex</td>
+              <td>$297.00</td>
+              <td><span class="badge pending">Pending</span></td>
+              <td><button id="btn-tx-1041" class="btn btn-secondary" data-mi-label="View Invoice #TX-1041">View</button></td>
+            </tr>
+            <tr id="row-tx-1042" data-mi-id="row-tx-1042" data-mi-row="true">
+              <td>#TX-1042</td>
+              <td>Soylent Inc</td>
+              <td>$314.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-1042" class="btn btn-secondary" data-mi-label="View Invoice #TX-1042">View</button></td>
+            </tr>
+            <tr id="row-tx-1043" data-mi-id="row-tx-1043" data-mi-row="true">
+              <td>#TX-1043</td>
+              <td>Initech</td>
+              <td>$331.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-1043" class="btn btn-secondary" data-mi-label="View Invoice #TX-1043">View</button></td>
+            </tr>
+            <tr id="row-tx-1044" data-mi-id="row-tx-1044" data-mi-row="true">
+              <td>#TX-1044</td>
+              <td>Umbrella Corp</td>
+              <td>$348.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-1044" class="btn btn-secondary" data-mi-label="View Invoice #TX-1044">View</button></td>
+            </tr>
+            <tr id="row-tx-1045" data-mi-id="row-tx-1045" data-mi-row="true">
+              <td>#TX-1045</td>
+              <td>Hooli</td>
+              <td>$365.00</td>
+              <td><span class="badge pending">Pending</span></td>
+              <td><button id="btn-tx-1045" class="btn btn-secondary" data-mi-label="View Invoice #TX-1045">View</button></td>
+            </tr>
+            <tr id="row-tx-1046" data-mi-id="row-tx-1046" data-mi-row="true">
+              <td>#TX-1046</td>
+              <td>Pied Piper</td>
+              <td>$382.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-1046" class="btn btn-secondary" data-mi-label="View Invoice #TX-1046">View</button></td>
+            </tr>
+            <tr id="row-tx-1047" data-mi-id="row-tx-1047" data-mi-row="true">
+              <td>#TX-1047</td>
+              <td>Cyberdyne</td>
+              <td>$399.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-1047" class="btn btn-secondary" data-mi-label="View Invoice #TX-1047">View</button></td>
+            </tr>
+            <tr id="row-tx-1048" data-mi-id="row-tx-1048" data-mi-row="true">
+              <td>#TX-1048</td>
+              <td>Acme Corp</td>
+              <td>$416.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-1048" class="btn btn-secondary" data-mi-label="View Invoice #TX-1048">View</button></td>
+            </tr>
+            <tr id="row-tx-1049" data-mi-id="row-tx-1049" data-mi-row="true">
+              <td>#TX-1049</td>
+              <td>Globex</td>
+              <td>$433.00</td>
+              <td><span class="badge pending">Pending</span></td>
+              <td><button id="btn-tx-1049" class="btn btn-secondary" data-mi-label="View Invoice #TX-1049">View</button></td>
+            </tr>
+            <tr id="row-tx-1050" data-mi-id="row-tx-1050" data-mi-row="true">
+              <td>#TX-1050</td>
+              <td>Soylent Inc</td>
+              <td>$450.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-1050" class="btn btn-secondary" data-mi-label="View Invoice #TX-1050">View</button></td>
+            </tr>
+            <tr id="row-tx-1051" data-mi-id="row-tx-1051" data-mi-row="true">
+              <td>#TX-1051</td>
+              <td>Initech</td>
+              <td>$467.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-1051" class="btn btn-secondary" data-mi-label="View Invoice #TX-1051">View</button></td>
+            </tr>
+            <tr id="row-tx-1052" data-mi-id="row-tx-1052" data-mi-row="true">
+              <td>#TX-1052</td>
+              <td>Umbrella Corp</td>
+              <td>$484.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-1052" class="btn btn-secondary" data-mi-label="View Invoice #TX-1052">View</button></td>
+            </tr>
+            <tr id="row-tx-1053" data-mi-id="row-tx-1053" data-mi-row="true">
+              <td>#TX-1053</td>
+              <td>Hooli</td>
+              <td>$501.00</td>
+              <td><span class="badge pending">Pending</span></td>
+              <td><button id="btn-tx-1053" class="btn btn-secondary" data-mi-label="View Invoice #TX-1053">View</button></td>
+            </tr>
+            <tr id="row-tx-1054" data-mi-id="row-tx-1054" data-mi-row="true">
+              <td>#TX-1054</td>
+              <td>Pied Piper</td>
+              <td>$518.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-1054" class="btn btn-secondary" data-mi-label="View Invoice #TX-1054">View</button></td>
+            </tr>
+            <tr id="row-tx-1055" data-mi-id="row-tx-1055" data-mi-row="true">
+              <td>#TX-1055</td>
+              <td>Cyberdyne</td>
+              <td>$535.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-1055" class="btn btn-secondary" data-mi-label="View Invoice #TX-1055">View</button></td>
+            </tr>
+            <tr id="row-tx-1056" data-mi-id="row-tx-1056" data-mi-row="true">
+              <td>#TX-1056</td>
+              <td>Acme Corp</td>
+              <td>$552.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-1056" class="btn btn-secondary" data-mi-label="View Invoice #TX-1056">View</button></td>
+            </tr>
+            <tr id="row-tx-1057" data-mi-id="row-tx-1057" data-mi-row="true">
+              <td>#TX-1057</td>
+              <td>Globex</td>
+              <td>$569.00</td>
+              <td><span class="badge pending">Pending</span></td>
+              <td><button id="btn-tx-1057" class="btn btn-secondary" data-mi-label="View Invoice #TX-1057">View</button></td>
+            </tr>
+            <tr id="row-tx-1058" data-mi-id="row-tx-1058" data-mi-row="true">
+              <td>#TX-1058</td>
+              <td>Soylent Inc</td>
+              <td>$586.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-1058" class="btn btn-secondary" data-mi-label="View Invoice #TX-1058">View</button></td>
+            </tr>
+            <tr id="row-tx-1059" data-mi-id="row-tx-1059" data-mi-row="true">
+              <td>#TX-1059</td>
+              <td>Initech</td>
+              <td>$603.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-1059" class="btn btn-secondary" data-mi-label="View Invoice #TX-1059">View</button></td>
+            </tr>
+            <tr id="row-tx-1060" data-mi-id="row-tx-1060" data-mi-row="true">
+              <td>#TX-1060</td>
+              <td>Umbrella Corp</td>
+              <td>$620.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-1060" class="btn btn-secondary" data-mi-label="View Invoice #TX-1060">View</button></td>
+            </tr>
+            <tr id="row-tx-1061" data-mi-id="row-tx-1061" data-mi-row="true">
+              <td>#TX-1061</td>
+              <td>Hooli</td>
+              <td>$637.00</td>
+              <td><span class="badge pending">Pending</span></td>
+              <td><button id="btn-tx-1061" class="btn btn-secondary" data-mi-label="View Invoice #TX-1061">View</button></td>
+            </tr>
+            <tr id="row-tx-1062" data-mi-id="row-tx-1062" data-mi-row="true">
+              <td>#TX-1062</td>
+              <td>Pied Piper</td>
+              <td>$654.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-1062" class="btn btn-secondary" data-mi-label="View Invoice #TX-1062">View</button></td>
+            </tr>
+            <tr id="row-tx-1063" data-mi-id="row-tx-1063" data-mi-row="true">
+              <td>#TX-1063</td>
+              <td>Cyberdyne</td>
+              <td>$671.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-1063" class="btn btn-secondary" data-mi-label="View Invoice #TX-1063">View</button></td>
+            </tr>
+            <tr id="row-tx-1064" data-mi-id="row-tx-1064" data-mi-row="true">
+              <td>#TX-1064</td>
+              <td>Acme Corp</td>
+              <td>$688.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-1064" class="btn btn-secondary" data-mi-label="View Invoice #TX-1064">View</button></td>
+            </tr>
+            <tr id="row-tx-1065" data-mi-id="row-tx-1065" data-mi-row="true">
+              <td>#TX-1065</td>
+              <td>Globex</td>
+              <td>$705.00</td>
+              <td><span class="badge pending">Pending</span></td>
+              <td><button id="btn-tx-1065" class="btn btn-secondary" data-mi-label="View Invoice #TX-1065">View</button></td>
+            </tr>
+            <tr id="row-tx-1066" data-mi-id="row-tx-1066" data-mi-row="true">
+              <td>#TX-1066</td>
+              <td>Soylent Inc</td>
+              <td>$722.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-1066" class="btn btn-secondary" data-mi-label="View Invoice #TX-1066">View</button></td>
+            </tr>
+            <tr id="row-tx-1067" data-mi-id="row-tx-1067" data-mi-row="true">
+              <td>#TX-1067</td>
+              <td>Initech</td>
+              <td>$739.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-1067" class="btn btn-secondary" data-mi-label="View Invoice #TX-1067">View</button></td>
+            </tr>
+            <tr id="row-tx-1068" data-mi-id="row-tx-1068" data-mi-row="true">
+              <td>#TX-1068</td>
+              <td>Umbrella Corp</td>
+              <td>$756.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-1068" class="btn btn-secondary" data-mi-label="View Invoice #TX-1068">View</button></td>
+            </tr>
+            <tr id="row-tx-1069" data-mi-id="row-tx-1069" data-mi-row="true">
+              <td>#TX-1069</td>
+              <td>Hooli</td>
+              <td>$773.00</td>
+              <td><span class="badge pending">Pending</span></td>
+              <td><button id="btn-tx-1069" class="btn btn-secondary" data-mi-label="View Invoice #TX-1069">View</button></td>
+            </tr>
+            <tr id="row-tx-1070" data-mi-id="row-tx-1070" data-mi-row="true">
+              <td>#TX-1070</td>
+              <td>Pied Piper</td>
+              <td>$790.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-1070" class="btn btn-secondary" data-mi-label="View Invoice #TX-1070">View</button></td>
+            </tr>
+            <tr id="row-tx-1071" data-mi-id="row-tx-1071" data-mi-row="true">
+              <td>#TX-1071</td>
+              <td>Cyberdyne</td>
+              <td>$807.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-1071" class="btn btn-secondary" data-mi-label="View Invoice #TX-1071">View</button></td>
+            </tr>
+            <tr id="row-tx-1072" data-mi-id="row-tx-1072" data-mi-row="true">
+              <td>#TX-1072</td>
+              <td>Acme Corp</td>
+              <td>$824.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-1072" class="btn btn-secondary" data-mi-label="View Invoice #TX-1072">View</button></td>
+            </tr>
+            <tr id="row-tx-1073" data-mi-id="row-tx-1073" data-mi-row="true">
+              <td>#TX-1073</td>
+              <td>Globex</td>
+              <td>$841.00</td>
+              <td><span class="badge pending">Pending</span></td>
+              <td><button id="btn-tx-1073" class="btn btn-secondary" data-mi-label="View Invoice #TX-1073">View</button></td>
+            </tr>
+            <tr id="row-tx-1074" data-mi-id="row-tx-1074" data-mi-row="true">
+              <td>#TX-1074</td>
+              <td>Soylent Inc</td>
+              <td>$858.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-1074" class="btn btn-secondary" data-mi-label="View Invoice #TX-1074">View</button></td>
+            </tr>
+            <tr id="row-tx-1075" data-mi-id="row-tx-1075" data-mi-row="true">
+              <td>#TX-1075</td>
+              <td>Initech</td>
+              <td>$875.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-1075" class="btn btn-secondary" data-mi-label="View Invoice #TX-1075">View</button></td>
+            </tr>
+            <tr id="row-tx-1076" data-mi-id="row-tx-1076" data-mi-row="true">
+              <td>#TX-1076</td>
+              <td>Umbrella Corp</td>
+              <td>$892.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-1076" class="btn btn-secondary" data-mi-label="View Invoice #TX-1076">View</button></td>
+            </tr>
+            <tr id="row-tx-1077" data-mi-id="row-tx-1077" data-mi-row="true">
+              <td>#TX-1077</td>
+              <td>Hooli</td>
+              <td>$909.00</td>
+              <td><span class="badge pending">Pending</span></td>
+              <td><button id="btn-tx-1077" class="btn btn-secondary" data-mi-label="View Invoice #TX-1077">View</button></td>
+            </tr>
+            <tr id="row-tx-1078" data-mi-id="row-tx-1078" data-mi-row="true">
+              <td>#TX-1078</td>
+              <td>Pied Piper</td>
+              <td>$926.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-1078" class="btn btn-secondary" data-mi-label="View Invoice #TX-1078">View</button></td>
+            </tr>
+            <tr id="row-tx-1079" data-mi-id="row-tx-1079" data-mi-row="true">
+              <td>#TX-1079</td>
+              <td>Cyberdyne</td>
+              <td>$943.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-1079" class="btn btn-secondary" data-mi-label="View Invoice #TX-1079">View</button></td>
+            </tr>
+            <tr id="row-tx-1080" data-mi-id="row-tx-1080" data-mi-row="true">
+              <td>#TX-1080</td>
+              <td>Acme Corp</td>
+              <td>$960.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-1080" class="btn btn-secondary" data-mi-label="View Invoice #TX-1080">View</button></td>
+            </tr>
+            <tr id="row-tx-1081" data-mi-id="row-tx-1081" data-mi-row="true">
+              <td>#TX-1081</td>
+              <td>Globex</td>
+              <td>$977.00</td>
+              <td><span class="badge pending">Pending</span></td>
+              <td><button id="btn-tx-1081" class="btn btn-secondary" data-mi-label="View Invoice #TX-1081">View</button></td>
+            </tr>
+            <tr id="row-tx-1082" data-mi-id="row-tx-1082" data-mi-row="true">
+              <td>#TX-1082</td>
+              <td>Soylent Inc</td>
+              <td>$994.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-1082" class="btn btn-secondary" data-mi-label="View Invoice #TX-1082">View</button></td>
+            </tr>
+            <tr id="row-tx-1083" data-mi-id="row-tx-1083" data-mi-row="true">
+              <td>#TX-1083</td>
+              <td>Initech</td>
+              <td>$1,011.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-1083" class="btn btn-secondary" data-mi-label="View Invoice #TX-1083">View</button></td>
+            </tr>
+            <tr id="row-tx-1084" data-mi-id="row-tx-1084" data-mi-row="true">
+              <td>#TX-1084</td>
+              <td>Umbrella Corp</td>
+              <td>$1,028.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-1084" class="btn btn-secondary" data-mi-label="View Invoice #TX-1084">View</button></td>
+            </tr>
+            <tr id="row-tx-1085" data-mi-id="row-tx-1085" data-mi-row="true">
+              <td>#TX-1085</td>
+              <td>Hooli</td>
+              <td>$1,045.00</td>
+              <td><span class="badge pending">Pending</span></td>
+              <td><button id="btn-tx-1085" class="btn btn-secondary" data-mi-label="View Invoice #TX-1085">View</button></td>
+            </tr>
+            <tr id="row-tx-1086" data-mi-id="row-tx-1086" data-mi-row="true">
+              <td>#TX-1086</td>
+              <td>Pied Piper</td>
+              <td>$1,062.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-1086" class="btn btn-secondary" data-mi-label="View Invoice #TX-1086">View</button></td>
+            </tr>
+            <tr id="row-tx-1087" data-mi-id="row-tx-1087" data-mi-row="true">
+              <td>#TX-1087</td>
+              <td>Cyberdyne</td>
+              <td>$1,079.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-1087" class="btn btn-secondary" data-mi-label="View Invoice #TX-1087">View</button></td>
+            </tr>
+            <tr id="row-tx-1088" data-mi-id="row-tx-1088" data-mi-row="true">
+              <td>#TX-1088</td>
+              <td>Acme Corp</td>
+              <td>$1,096.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-1088" class="btn btn-secondary" data-mi-label="View Invoice #TX-1088">View</button></td>
+            </tr>
+            <tr id="row-tx-1089" data-mi-id="row-tx-1089" data-mi-row="true">
+              <td>#TX-1089</td>
+              <td>Globex</td>
+              <td>$1,113.00</td>
+              <td><span class="badge pending">Pending</span></td>
+              <td><button id="btn-tx-1089" class="btn btn-secondary" data-mi-label="View Invoice #TX-1089">View</button></td>
+            </tr>
+            <tr id="row-tx-1090" data-mi-id="row-tx-1090" data-mi-row="true">
+              <td>#TX-1090</td>
+              <td>Soylent Inc</td>
+              <td>$1,130.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-1090" class="btn btn-secondary" data-mi-label="View Invoice #TX-1090">View</button></td>
+            </tr>
+            <tr id="row-tx-1091" data-mi-id="row-tx-1091" data-mi-row="true">
+              <td>#TX-1091</td>
+              <td>Initech</td>
+              <td>$1,147.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-1091" class="btn btn-secondary" data-mi-label="View Invoice #TX-1091">View</button></td>
+            </tr>
+            <tr id="row-tx-1092" data-mi-id="row-tx-1092" data-mi-row="true">
+              <td>#TX-1092</td>
+              <td>Umbrella Corp</td>
+              <td>$1,164.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-1092" class="btn btn-secondary" data-mi-label="View Invoice #TX-1092">View</button></td>
+            </tr>
+            <tr id="row-tx-1093" data-mi-id="row-tx-1093" data-mi-row="true">
+              <td>#TX-1093</td>
+              <td>Hooli</td>
+              <td>$1,181.00</td>
+              <td><span class="badge pending">Pending</span></td>
+              <td><button id="btn-tx-1093" class="btn btn-secondary" data-mi-label="View Invoice #TX-1093">View</button></td>
+            </tr>
+            <tr id="row-tx-1094" data-mi-id="row-tx-1094" data-mi-row="true">
+              <td>#TX-1094</td>
+              <td>Pied Piper</td>
+              <td>$1,198.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-1094" class="btn btn-secondary" data-mi-label="View Invoice #TX-1094">View</button></td>
+            </tr>
+            <tr id="row-tx-1095" data-mi-id="row-tx-1095" data-mi-row="true">
+              <td>#TX-1095</td>
+              <td>Cyberdyne</td>
+              <td>$1,215.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-1095" class="btn btn-secondary" data-mi-label="View Invoice #TX-1095">View</button></td>
+            </tr>
+            <tr id="row-tx-1096" data-mi-id="row-tx-1096" data-mi-row="true">
+              <td>#TX-1096</td>
+              <td>Acme Corp</td>
+              <td>$1,232.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-1096" class="btn btn-secondary" data-mi-label="View Invoice #TX-1096">View</button></td>
+            </tr>
+            <tr id="row-tx-1097" data-mi-id="row-tx-1097" data-mi-row="true">
+              <td>#TX-1097</td>
+              <td>Globex</td>
+              <td>$1,249.00</td>
+              <td><span class="badge pending">Pending</span></td>
+              <td><button id="btn-tx-1097" class="btn btn-secondary" data-mi-label="View Invoice #TX-1097">View</button></td>
+            </tr>
+            <tr id="row-tx-1098" data-mi-id="row-tx-1098" data-mi-row="true">
+              <td>#TX-1098</td>
+              <td>Soylent Inc</td>
+              <td>$1,266.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-1098" class="btn btn-secondary" data-mi-label="View Invoice #TX-1098">View</button></td>
+            </tr>
+            <tr id="row-tx-1099" data-mi-id="row-tx-1099" data-mi-row="true">
+              <td>#TX-1099</td>
+              <td>Initech</td>
+              <td>$1,283.00</td>
+              <td><span class="badge paid">Paid</span></td>
+              <td><button id="btn-tx-1099" class="btn btn-secondary" data-mi-label="View Invoice #TX-1099">View</button></td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Admin Tab -->
+    <div id="tab-admin" class="tab-pane">
+      <div id="admin-danger-zone" data-mi-roles="admin" class="card danger-zone">
+        <h2>Danger Zone</h2>
+        <p>Critical administrative actions. These operations mutate production data permanently.</p>
+        <button id="btn-delete-workspace" class="btn btn-danger" data-mi-roles="admin" data-mi-label="Delete Workspace" data-mi-body="Permanently destroy workspace and all associated customer databases">Delete Workspace</button>
+        <button id="btn-purge-db" class="btn btn-danger" data-mi-roles="admin" data-mi-label="Purge Database" data-mi-body="Erase all billing history and database snapshots">Purge Database</button>
+      </div>
+    </div>
+
+    <!-- Privacy Policy Tab -->
+    <div id="tab-privacy" class="tab-pane">
+      <div id="privacy-policy" class="card policy-prose">
+        <h2>Privacy Policy & Legal Terms</h2>
+        <p id="clause-privacy-email" data-mi-clause="true">We do not sell, rent, or trade your personal email address or communication logs to third parties for commercial advertising purposes under any circumstances.</p>
+        <p id="clause-privacy-retention" data-mi-clause="true">Customer financial records and transaction logs are securely retained for a minimum of seven years to comply with international statutory tax standards.</p>
+        <p id="clause-privacy-gdpr" data-mi-clause="true">Users retain the unconditional right to request erasure of account records in full accordance with the General Data Protection Regulation.</p>
+      </div>
+    </div>
+  </main>
+
+  <script type="module" src="./src/main.ts"></script>
+</body>
+</html>
