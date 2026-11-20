@@ -1,0 +1,66 @@
+[
+  {
+    "query": "how do I enter my EU VAT number?",
+    "expectedTopId": "item-tax-vat",
+    "expectedDecision": "choice",
+    "expectOOD": false,
+    "category": "harness_item"
+  },
+  {
+    "query": "set up Okta single sign-on",
+    "expectedTopId": "playbook-configure-sso",
+    "expectOOD": false,
+    "user": {
+      "tier": "free",
+      "appState": {
+        "tier": "free"
+      }
+    },
+    "category": "playbook_free_upgrade"
+  },
+  {
+    "query": "configure SAML authentication",
+    "expectedTopId": "playbook-configure-sso",
+    "expectOOD": false,
+    "user": {
+      "tier": "pro",
+      "appState": {
+        "tier": "pro",
+        "ssoConfigured": false
+      }
+    },
+    "category": "playbook_sso_toggle"
+  },
+  {
+    "query": "connect enterprise identity provider",
+    "expectedTopId": "playbook-configure-sso",
+    "expectOOD": false,
+    "user": {
+      "tier": "enterprise",
+      "appState": {
+        "tier": "enterprise",
+        "ssoConfigured": true
+      }
+    },
+    "category": "playbook_sso_idp"
+  },
+  {
+    "query": "do not delete workspace",
+    "expectOOD": true,
+    "expectedDecision": "noul",
+    "notExpectedIds": ["btn-delete-workspace"],
+    "category": "negation_intent_gate"
+  },
+  {
+    "query": "do not sell personal email",
+    "expectOOD": false,
+    "expectedDecision": "choice",
+    "category": "self_negated_policy_clause"
+  },
+  {
+    "query": "xyzq_unrelated_random_gibberish_999",
+    "expectOOD": true,
+    "expectedDecision": "noul",
+    "category": "ood_rejection"
+  }
+]

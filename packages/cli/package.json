@@ -1,0 +1,51 @@
+{
+    "name":  "@picolocus/cli",
+    "version":  "1.0.0",
+    "description":  "Build-time HTML/JSX scanner, physical RBAC manifest compiler, smoke runner and golden query simulator for @picolocus",
+    "author": "Sai Jyothi Kumar <saikumarjyo14@gmail.com>",
+    "homepage": "https://github.com/saijyothikumar/picolocus/tree/main/packages/cli#readme",
+    "bugs": {
+        "url": "https://github.com/saijyothikumar/picolocus/issues"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/saijyothikumar/picolocus.git",
+        "directory": "packages/cli"
+    },
+    "keywords": [
+        "picolocus",
+        "cli",
+        "ast-scanner",
+        "manifest-compiler",
+        "rbac-verifier",
+        "smoke-test"
+    ],
+    "license":  "Apache-2.0",
+    "type":  "module",
+    "bin":  {
+                "picolocus":  "./dist/bin.js",
+                "pico":  "./dist/bin.js",
+                "silent-mi":  "./dist/bin.js"
+            },
+    "main":  "./dist/index.js",
+    "types":  "./dist/index.d.ts",
+    "files":  [
+                  "dist"
+              ],
+    "scripts":  {
+                    "build":  "tsc -b"
+                },
+    "dependencies":  {
+                         "@picolocus/core":  "^1.0.0",
+                         "node-html-parser":  "^7.0.1",
+                         "typescript":  "^5.7.2"
+                     },
+    "peerDependencies":  {
+                             "@huggingface/transformers":  "^3.0.0"
+                         },
+    "peerDependenciesMeta":  {
+                                 "@huggingface/transformers":  {
+                                                                   "optional":  true
+                                                               }
+                             }
+}

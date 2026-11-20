@@ -1,0 +1,96 @@
+{
+  "harnessVersion": "1.0",
+  "glossary": {
+    "VAT": ["value added tax", "tax identification", "eu vat", "tax number"],
+    "SSO": ["single sign-on", "saml", "okta", "identity provider", "idp"],
+    "2FA": ["two-factor authentication", "mfa", "authenticator", "totp"]
+  },
+  "items": [
+    {
+      "id": "item-tax-vat",
+      "label": "Add EU VAT Number",
+      "targetType": "action",
+      "description": "Enter your European Union Value Added Tax (VAT) identification number for reverse-charge invoicing.",
+      "selector": "#input-vat-id",
+      "triggerChain": ["#tab-billing", "#btn-open-tax-modal"],
+      "whenUserAsks": [
+        "how do I enter my EU VAT number?",
+        "where do I put my VAT ID?",
+        "add tax registration number",
+        "configure business VAT ID"
+      ],
+      "calloutTitle": "EU Tax Exemption",
+      "calloutText": "Enter your valid EU VAT ID to exempt reverse-charge billing.",
+      "route": "/billing"
+    }
+  ],
+  "playbooks": [
+    {
+      "id": "playbook-configure-sso",
+      "label": "Configure SAML Single Sign-On (SSO)",
+      "description": "Set up SAML 2.0 Identity Provider authentication (Okta, Azure AD, Google Workspace) for team members.",
+      "whenUserAsks": [
+        "how do I configure SAML SSO?",
+        "set up Okta single sign-on",
+        "integrate Google Workspace SAML",
+        "connect enterprise identity provider"
+      ],
+      "branches": [
+        {
+          "condition": {
+            "state": {
+              "tier": "free"
+            }
+          },
+          "target": {
+            "route": "/pricing",
+            "selector": "#btn-upgrade-pro",
+            "calloutTitle": "SSO Requires Pro or Enterprise",
+            "calloutText": "Upgrade your organization plan to unlock SAML Single Sign-On."
+          }
+        },
+        {
+          "condition": {
+            "domDisabled": ["#toggle-sso"]
+          },
+          "target": {
+            "route": "/security",
+            "triggerChain": ["#tab-security"],
+            "selector": "#btn-verify-domain",
+            "calloutTitle": "Domain Verification Required",
+            "calloutText": "Verify your corporate email domain before enabling SAML Single Sign-On."
+          }
+        },
+        {
+          "condition": {
+            "state": {
+              "ssoConfigured": false
+            }
+          },
+          "target": {
+            "route": "/security",
+            "triggerChain": ["#tab-security"],
+            "selector": "#toggle-sso",
+            "calloutTitle": "Enable SSO Toggle",
+            "calloutText": "Toggle SSO on to open SAML IdP metadata configuration."
+          }
+        },
+        {
+          "default": true,
+          "condition": {
+            "state": {
+              "ssoConfigured": true
+            }
+          },
+          "target": {
+            "route": "/security",
+            "triggerChain": ["#tab-security"],
+            "selector": "#input-idp-url",
+            "calloutTitle": "SAML IdP Metadata URL",
+            "calloutText": "Enter your Identity Provider metadata URL or XML certificate."
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,56 @@
+{
+    "name":  "@picolocus/onnx",
+    "version":  "1.0.0",
+    "description":  "Optional WebWorker and WebAssembly EmbedderPlugin with latest-only queue and idle RAM reaper for @picolocus",
+    "author": "Sai Jyothi Kumar <saikumarjyo14@gmail.com>",
+    "homepage": "https://github.com/saijyothikumar/picolocus/tree/main/packages/onnx#readme",
+    "bugs": {
+        "url": "https://github.com/saijyothikumar/picolocus/issues"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/saijyothikumar/picolocus.git",
+        "directory": "packages/onnx"
+    },
+    "keywords": [
+        "picolocus",
+        "onnx",
+        "web-worker",
+        "wasm",
+        "transformers-js",
+        "idle-reaper",
+        "matryoshka"
+    ],
+    "license":  "Apache-2.0",
+    "type":  "module",
+    "main":  "./dist/index.js",
+    "module":  "./dist/index.js",
+    "types":  "./dist/index.d.ts",
+    "exports":  {
+                    ".":  {
+                              "types":  "./dist/index.d.ts",
+                              "import":  "./dist/index.js",
+                              "default":  "./dist/index.js"
+                          }
+                },
+    "files":  [
+                  "dist"
+              ],
+    "scripts":  {
+                    "build":  "tsc -b"
+                },
+    "dependencies":  {
+                         "@picolocus/core":  "^1.0.0"
+                     },
+    "peerDependencies":  {
+                             "@huggingface/transformers":  "^3.0.0"
+                         },
+    "peerDependenciesMeta":  {
+                                 "@huggingface/transformers":  {
+                                                                   "optional":  true
+                                                               }
+                             },
+    "devDependencies":  {
+                            "typescript":  "^5.7.2"
+                        }
+}

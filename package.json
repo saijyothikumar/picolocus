@@ -1,0 +1,62 @@
+{
+  "name": "picolocus-monorepo",
+  "version": "1.0.0",
+  "description": "Modular client-side micro-intelligence SDK providing non-destructive UI navigation, hybrid search, and verbatim clause highlighting without chat or LLM hallucinations",
+  "author": "Sai Jyothi Kumar <saikumarjyo14@gmail.com>",
+  "homepage": "https://github.com/saijyothikumar/picolocus#readme",
+  "bugs": {
+    "url": "https://github.com/saijyothikumar/picolocus/issues"
+  },
+  "keywords": [
+    "micro-intelligence",
+    "search",
+    "hybrid-search",
+    "ui-navigation",
+    "client-side-ai",
+    "onnx",
+    "wasm",
+    "privacy",
+    "zero-dependency"
+  ],
+  "private": true,
+  "license": "Apache-2.0",
+  "type": "module",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "workspaces": [
+    "packages/*",
+    "sandbox/*"
+  ],
+  "scripts": {
+    "build": "npm run build --workspace=@picolocus/core && npm run build --workspace=@picolocus/cli && npm run build --workspace=@picolocus/web && npm run build --workspace=@picolocus/onnx",
+    "build:demo": "npm run build --workspace=picolocus-demo-saas",
+    "prescan": "npm run build",
+    "scan": "node --import tsx packages/cli/src/bin.ts scan --config sandbox/demo-saas/picolocus.config.json",
+    "presuggest": "npm run build",
+    "suggest": "node --import tsx packages/cli/src/bin.ts suggest --dir sandbox/demo-saas",
+    "preverify": "npm run build",
+    "verify": "node --import tsx packages/cli/src/bin.ts verify --config sandbox/demo-saas/picolocus.config.json",
+    "pretest:queries": "npm run build",
+    "test:queries": "node --import tsx packages/cli/src/bin.ts test-queries --config sandbox/demo-saas/picolocus.config.json --queries sandbox/demo-saas/golden-queries.json",
+    "presmoke:model": "npm run build",
+    "smoke:model": "node --import tsx packages/cli/src/bin.ts smoke --config sandbox/demo-saas/picolocus.config.json --models-dir sandbox/demo-saas/public/models",
+    "pack:sdk": "node -e \"import('node:fs').then(f=>f.mkdirSync('release', {recursive:true}))\" && npm pack --workspace=@picolocus/core --workspace=@picolocus/web --workspace=@picolocus/onnx --workspace=@picolocus/cli --pack-destination ./release",
+    "dev": "npx vite sandbox/demo-saas",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test",
+    "typecheck": "tsc -b packages/core packages/cli packages/web packages/onnx && npx tsc -p sandbox/demo-saas/tsconfig.json --noEmit"
+  },
+  "devDependencies": {
+    "@huggingface/transformers": "^3.8.1",
+    "@playwright/test": "^1.50.0",
+    "@types/node": "^22.10.0",
+    "jsdom": "^25.0.1",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.5",
+    "vitest": "^2.1.8"
+  },
+  "repository": "https://github.com/saijyothikumar/picolocus.git"
+}

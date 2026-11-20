@@ -1,0 +1,18 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "composite": false,
+    "declaration": false,
+    "declarationMap": false,
+    "outDir": "./dist",
+    "baseUrl": ".",
+    "paths": {
+      "@picolocus/core": ["../../packages/core/src/index.ts"],
+      "@picolocus/web": ["../../packages/web/src/index.ts"],
+      "@picolocus/onnx": ["../../packages/onnx/src/index.ts"]
+    }
+  },
+  "include": ["src/**/*"]
+}
