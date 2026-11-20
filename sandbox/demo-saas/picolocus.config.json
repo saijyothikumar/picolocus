@@ -3,6 +3,6 @@
   "manifestsDir": "sandbox/demo-saas/public/manifests",
   "modelsDir": "sandbox/demo-saas/public/models",
   "modelId": "mdbr-leaf-ir",
-  "harnessPath": "sandbox/demo-saas/silent-mi.harness.json",
+  "harnessPath": "sandbox/demo-saas/picolocus.harness.json",
   "queriesPath": "sandbox/demo-saas/golden-queries.json"
 }

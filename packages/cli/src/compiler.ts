@@ -47,6 +47,8 @@ export class ManifestCompiler {
 
         if (harness.domainGlossary) {
           domainGlossary = harness.domainGlossary;
+        } else if ((harness as any).glossary) {
+          domainGlossary = (harness as any).glossary;
         }
 
         if (Array.isArray(harness.items)) {

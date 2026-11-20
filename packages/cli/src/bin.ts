@@ -98,14 +98,15 @@ async function main(): Promise<void> {
   const manifestsDir = (flags['out'] as string) || config.manifestsDir || 'sandbox/demo-saas/public/manifests';
   const modelsDir = (flags['models-dir'] as string) || config.modelsDir || 'sandbox/demo-saas/public/models';
   const modelId = (flags['model'] as string) || config.modelId;
+  const explicitHarness = (flags['harness'] as string) || config.harnessPath;
   const harnessPath =
-    (flags['harness'] as string) ||
-    config.harnessPath ||
-    (existsSync(join(scanDir, 'picolocus.harness.json'))
-      ? join(scanDir, 'picolocus.harness.json')
-      : existsSync(join(scanDir, 'silent-mi.harness.json'))
-        ? join(scanDir, 'silent-mi.harness.json')
-        : undefined);
+    explicitHarness && existsSync(explicitHarness)
+      ? explicitHarness
+      : existsSync(join(scanDir, 'picolocus.harness.json'))
+        ? join(scanDir, 'picolocus.harness.json')
+        : existsSync(join(scanDir, 'silent-mi.harness.json'))
+          ? join(scanDir, 'silent-mi.harness.json')
+          : undefined;
 
   switch (command) {
     case 'scan': {

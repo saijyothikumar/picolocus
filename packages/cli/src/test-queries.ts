@@ -88,22 +88,31 @@ export class TestQueriesRunner {
       (f) => f.startsWith('manifest.') && f.endsWith('.json')
     );
 
+    const engine = new SilentMIEngine({
+      minConfidence: 0.29,
+      oodSemanticFloor: 0.44,
+      tierOrder: ['free', 'pro', 'enterprise'],
+    });
+
     for (const f of manifestFiles) {
       try {
         const manifest = JSON.parse(readFileSync(join(manifestsDir, f), 'utf-8')) as RoleManifest;
         if (Array.isArray(manifest.items)) {
           allItems.push(...manifest.items);
         }
+        if (Array.isArray(manifest.playbooks)) {
+          for (const pb of manifest.playbooks) {
+            engine.registerPlaybook(pb);
+          }
+        }
+        if (manifest.domainGlossary) {
+          engine.registerGlossary(manifest.domainGlossary);
+        }
       } catch {
         // Ignore single parse error
       }
     }
 
-    const engine = new SilentMIEngine({
-      minConfidence: 0.29,
-      oodSemanticFloor: 0.44,
-      tierOrder: ['free', 'pro', 'enterprise'],
-    });
     engine.setItems(allItems);
 
     // 3. Load Test Cases

@@ -212,12 +212,16 @@ async function initSdk(activateTab: (hash: string) => void): Promise<void> {
   const useOnnx = urlParams.has('onnx') && urlParams.get('onnx') !== 'false';
   const ramBadge = document.getElementById('ram-telemetry');
 
+  const baseUrl = import.meta.env.BASE_URL.endsWith('/')
+    ? import.meta.env.BASE_URL
+    : `${import.meta.env.BASE_URL}/`;
+
   if (useOnnx) {
     try {
       const isEager = urlParams.get('consent') === 'eager';
       activeEmbedder = createOnnxEmbedder({
         modelId: 'mdbr-leaf-ir',
-        localModelPath: '/models/mdbr-leaf-ir',
+        localModelPath: `${baseUrl}models/mdbr-leaf-ir`,
         idleTimeoutMs: 120000,
         consentMode: isEager ? 'eager' : 'opt-in',
         consentGranted: isEager,
@@ -266,10 +270,10 @@ async function initSdk(activateTab: (hash: string) => void): Promise<void> {
       },
     },
     manifestUrls: {
-      public: '/manifests/manifest.public.json',
-      docs: '/manifests/manifest.docs.json',
+      public: `${baseUrl}manifests/manifest.public.json`,
+      docs: `${baseUrl}manifests/manifest.docs.json`,
       byRole: {
-        admin: '/manifests/manifest.admin.json',
+        admin: `${baseUrl}manifests/manifest.admin.json`,
       },
     },
     embedder: activeEmbedder || undefined,

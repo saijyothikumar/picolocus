@@ -185,6 +185,10 @@ export class SilentMIEngine {
     this.addItems(items);
   }
 
+  registerGlossary(glossary: Record<string, readonly string[]>): void {
+    this.glossary = { ...this.glossary, ...glossary };
+  }
+
   loadManifests(manifests: RoleManifest[]): void {
     for (const m of manifests) {
       if (m.domainGlossary) {

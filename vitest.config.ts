@@ -7,6 +7,8 @@ export default defineConfig({
     environmentMatchGlobs: [
       ['packages/web/**', 'jsdom'],
     ],
+    pool: 'forks',
     globals: true,
   },
 });
+

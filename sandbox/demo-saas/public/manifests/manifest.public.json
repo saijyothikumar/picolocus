@@ -114924,6 +114924,27 @@
       "quantScale": 0.0022464983510103844
     }
   ],
+  "domainGlossary": {
+    "VAT": [
+      "value added tax",
+      "tax identification",
+      "eu vat",
+      "tax number"
+    ],
+    "SSO": [
+      "single sign-on",
+      "saml",
+      "okta",
+      "identity provider",
+      "idp"
+    ],
+    "2FA": [
+      "two-factor authentication",
+      "mfa",
+      "authenticator",
+      "totp"
+    ]
+  },
   "playbooks": [
     {
       "id": "playbook-configure-sso",

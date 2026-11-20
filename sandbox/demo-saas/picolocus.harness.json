@@ -1,5 +1,10 @@
 {
   "harnessVersion": "1.0",
+  "domainGlossary": {
+    "VAT": ["value added tax", "tax identification", "eu vat", "tax number"],
+    "SSO": ["single sign-on", "saml", "okta", "identity provider", "idp"],
+    "2FA": ["two-factor authentication", "mfa", "authenticator", "totp"]
+  },
   "glossary": {
     "VAT": ["value added tax", "tax identification", "eu vat", "tax number"],
     "SSO": ["single sign-on", "saml", "okta", "identity provider", "idp"],
