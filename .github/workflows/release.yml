@@ -15,6 +15,9 @@ permissions:
   contents: read
   id-token: write
 
+env:
+  ONNXRUNTIME_NODE_INSTALL_CUDA: 'skip'
+
 jobs:
   publish:
     runs-on: ubuntu-latest
@@ -31,6 +34,9 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Run security vulnerability audit
+        run: npm audit --audit-level=high
 
       - name: Build and verify all packages
         run: |
