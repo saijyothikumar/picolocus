@@ -140,6 +140,9 @@ export function stemToken(token: string): string {
     }
     return base;
   }
+  if (lower.endsWith('sses')) {
+    return lower.slice(0, -2);
+  }
   if (
     lower.endsWith('ces') ||
     lower.endsWith('ges') ||
@@ -258,6 +261,11 @@ export function analyzeActionPolarity(
   return { polarityPenalty: 0.0 };
 }
 
+export const CUE_PATTERN = new RegExp(
+  `\\b(?:${NEGATION_CUES.map((c) => c.replace("'", "['’]")).join('|')})\\b`,
+  'i'
+);
+
 /**
  * Parses user query into affirmative vs negated intent.
  */
@@ -286,16 +294,11 @@ export function parseQueryIntent(rawQuery: string): ParsedQueryIntent {
   const negatedClauses: string[] = [];
   let foundNegation = false;
 
-  const cuePattern = new RegExp(
-    `\\b(?:${NEGATION_CUES.map((c) => c.replace("'", "['’]")).join('|')})\\b`,
-    'i'
-  );
-
   for (const clause of clauseSplits) {
     const clauseTrimmed = clause.trim();
     if (!clauseTrimmed) continue;
 
-    const match = cuePattern.exec(clauseTrimmed);
+    const match = CUE_PATTERN.exec(clauseTrimmed);
     if (match && typeof match.index === 'number') {
       foundNegation = true;
       const cueIndex = match.index;

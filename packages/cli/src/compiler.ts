@@ -139,7 +139,8 @@ export class ManifestCompiler {
         }
       } else {
         // Restricted item: isolate into manifest.<role>.json
-        const roles = item.roles && item.roles.length > 0 ? item.roles : ['authenticated'];
+        const nonPublicRoles = (item.roles || []).filter((r) => r.toLowerCase().trim() !== 'public');
+        const roles = nonPublicRoles.length > 0 ? nonPublicRoles : ['authenticated'];
         for (const role of roles) {
           const rLower = role.toLowerCase().trim();
           if (rLower === 'public') continue;
@@ -242,6 +243,12 @@ export class ManifestCompiler {
                 `RBAC LEAK in ${file}: Restricted item "${item.id}" (roles: ${item.roles.join(', ')}) found in public manifest!`
               );
             }
+          }
+
+          if (isPublicManifest && item.tierPolicy === 'hide') {
+            errors.push(
+              `RBAC LEAK in ${file}: Hidden item "${item.id}" (tierPolicy: hide) found in public manifest!`
+            );
           }
 
           // Check 2: Int8 vector bounds check

@@ -235,7 +235,7 @@ export class AstScanner {
               targetType,
               kind,
               label: label.trim(),
-              description: attrs['data-mi-description'] || attrs['title'] || undefined,
+              description: attrs['data-mi-description'] || attrs['data-mi-body'] || attrs['title'] || undefined,
               route: attrs['href'] || attrs['data-mi-route'] || currentAuth.route || undefined,
               selector: attrs['id'] ? `#${attrs['id']}` : `[data-mi-id="${id}"]`,
               parentTriggerSelector,
@@ -360,7 +360,7 @@ export class AstScanner {
           if (ts.isStringLiteral(prop.initializer)) {
             res[name] = prop.initializer.text;
           } else if (ts.isJsxExpression(prop.initializer) && prop.initializer.expression) {
-            res[name] = prop.initializer.expression.getText(sourceFile).replace(/^['"]|['"]$/g, '');
+            res[name] = prop.initializer.expression.getText(sourceFile).replace(/^['"`]|['"`]$/g, '');
           }
         } else {
           res[name] = 'true';
@@ -371,11 +371,17 @@ export class AstScanner {
   }
 
   private extractJsxTextContent(node: ts.Node, sourceFile: ts.SourceFile): string {
-    if (ts.isJsxElement(node)) {
+    if (ts.isJsxElement(node) || ts.isJsxFragment(node)) {
       let text = '';
       for (const child of node.children) {
         if (ts.isJsxText(child)) {
           text += child.getText(sourceFile).trim() + ' ';
+        } else if (ts.isJsxExpression(child)) {
+          if (child.expression && ts.isStringLiteral(child.expression)) {
+            text += child.expression.text.trim() + ' ';
+          }
+        } else if (ts.isJsxElement(child) || ts.isJsxSelfClosingElement(child)) {
+          text += this.extractJsxTextContent(child, sourceFile) + ' ';
         }
       }
       return text.trim();

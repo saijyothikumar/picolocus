@@ -140,12 +140,18 @@ export class TestQueriesRunner {
       }
       categoryStats.get(cat)!.total++;
 
-      // Normalize array disabledSelectors from JSON to Set
+      // Normalize array selectors from JSON to Set
       if (
         tc.user?.domContext?.disabledSelectors &&
         Array.isArray(tc.user.domContext.disabledSelectors)
       ) {
         tc.user.domContext.disabledSelectors = new Set(tc.user.domContext.disabledSelectors);
+      }
+      if (
+        tc.user?.domContext?.visibleSelectors &&
+        Array.isArray(tc.user.domContext.visibleSelectors)
+      ) {
+        tc.user.domContext.visibleSelectors = new Set(tc.user.domContext.visibleSelectors);
       }
 
       const start = performance.now();

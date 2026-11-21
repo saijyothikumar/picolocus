@@ -437,8 +437,13 @@ export class SpotlightBar {
       }, 160);
     });
 
-    // Enter / Shift+Enter stepping
+    // Enter / Shift+Enter stepping & Escape to close
     this.inputEl.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        this.minimize();
+        return;
+      }
       if (e.key === 'Enter') {
         e.preventDefault();
         if (e.shiftKey) {
@@ -536,6 +541,8 @@ export class SpotlightBar {
       const li = document.createElement('li');
       li.className = 'pico-item silent-mi-item';
       li.setAttribute('data-smi-ui', 'true');
+      li.tabIndex = 0;
+      li.setAttribute('role', 'button');
       if (i === currentIndex) {
         li.setAttribute('data-active', 'true');
       }
@@ -570,6 +577,14 @@ export class SpotlightBar {
       li.addEventListener('click', () => {
         this.session.jumpTo(i);
         this.callbacks.onSelectMatch(match);
+      });
+
+      li.addEventListener('keydown', (e: KeyboardEvent) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          this.session.jumpTo(i);
+          this.callbacks.onSelectMatch(match);
+        }
       });
 
       items.push(li);

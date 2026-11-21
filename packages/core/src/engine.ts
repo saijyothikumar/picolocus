@@ -36,6 +36,7 @@ import {
   stemToken,
   tokenizeWords,
   NEGATION_CUES,
+  CUE_PATTERN,
 } from './negation.js';
 import {
   evaluatePlaybookBranches,
@@ -289,7 +290,8 @@ export class SilentMIEngine {
     const { unnegatedBodyTokens, hasSelfNegatedTerms } = this.extractClausePolarity(
       item.description,
       item.verbatimText,
-      item.liveStatus
+      item.liveStatus,
+      item.label
     );
 
     let vector: Int8Array | null = null;
@@ -332,10 +334,16 @@ export class SilentMIEngine {
   private extractClausePolarity(
     description?: string,
     verbatimText?: string,
-    liveStatus?: string
+    liveStatus?: string,
+    label?: string
   ): { unnegatedBodyTokens: Set<string>; hasSelfNegatedTerms: boolean } {
     const unnegatedBodyTokens = new Set<string>();
     let hasSelfNegatedTerms = false;
+
+    // Check if label contains negation cue (e.g. "Do Not Disturb")
+    if (label && CUE_PATTERN.test(label)) {
+      hasSelfNegatedTerms = true;
+    }
 
     const fullBody = [description, verbatimText, liveStatus].filter(Boolean).join(' ');
     if (!fullBody.trim()) {
@@ -343,16 +351,12 @@ export class SilentMIEngine {
     }
 
     const sentences = fullBody.split(/[.!?;]|\bbut\b/i);
-    const cuePattern = new RegExp(
-      `\\b(?:${NEGATION_CUES.map((c) => c.replace("'", "['’]")).join('|')})\\b`,
-      'i'
-    );
 
     for (const sent of sentences) {
       const trimmed = sent.trim();
       if (!trimmed) continue;
 
-      const cueMatch = cuePattern.exec(trimmed);
+      const cueMatch = CUE_PATTERN.exec(trimmed);
       if (cueMatch && typeof cueMatch.index === 'number') {
         hasSelfNegatedTerms = true;
         const beforeCue = trimmed.slice(0, cueMatch.index);

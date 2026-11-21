@@ -25,6 +25,7 @@ export class SemanticEmbedderClient implements EmbedderPlugin {
   private hiddenReapDelayMs: number;
   private idleTimer: ReturnType<typeof setTimeout> | null = null;
   private tabHiddenTimer: ReturnType<typeof setTimeout> | null = null;
+  private pendingReapInterval: ReturnType<typeof setInterval> | null = null;
 
   private optedIn = false;
   private _isReady = false;
@@ -269,7 +270,15 @@ export class SemanticEmbedderClient implements EmbedderPlugin {
     });
   }
 
+  private clearReapInterval(): void {
+    if (this.pendingReapInterval) {
+      clearInterval(this.pendingReapInterval);
+      this.pendingReapInterval = null;
+    }
+  }
+
   private resetIdleTimer(): void {
+    this.clearReapInterval();
     if (this.idleTimer) {
       clearTimeout(this.idleTimer);
       this.idleTimer = null;
@@ -313,12 +322,13 @@ export class SemanticEmbedderClient implements EmbedderPlugin {
   }
 
   private reapWhenIdle(reason: string): void {
+    this.clearReapInterval();
     if (this.pendingRequests.size > 0) {
       // Defer termination until in-flight requests settle (with 5-second upper safety timeout)
       const startTime = Date.now();
-      const checkInterval = setInterval(() => {
+      this.pendingReapInterval = setInterval(() => {
         if (this.pendingRequests.size === 0 || Date.now() - startTime > 5000) {
-          clearInterval(checkInterval);
+          this.clearReapInterval();
           this.reapIdleWorker(reason);
         }
       }, 50);
@@ -331,6 +341,7 @@ export class SemanticEmbedderClient implements EmbedderPlugin {
    * Terminates the worker to reclaim WASM RAM while keeping optedIn = true and disposed = false.
    */
   reapIdleWorker(_reason = 'reap'): void {
+    this.clearReapInterval();
     if (this.idleTimer) {
       clearTimeout(this.idleTimer);
       this.idleTimer = null;

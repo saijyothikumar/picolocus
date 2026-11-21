@@ -120,26 +120,24 @@ function setupConsentControls(): void {
 
   btnGrantConsent?.addEventListener('click', async () => {
     if (controller) {
+      if (consentStatus) consentStatus.textContent = 'AI: Consented';
+      if (btnGrantConsent) btnGrantConsent.style.display = 'none';
+      if (btnRevokeConsent) btnRevokeConsent.style.display = 'inline-block';
       await controller.grantConsent();
-      if (controller.isConsented()) {
-        if (consentStatus) consentStatus.textContent = 'AI: Consented';
-        if (btnGrantConsent) btnGrantConsent.style.display = 'none';
-        if (btnRevokeConsent) btnRevokeConsent.style.display = 'inline-block';
-        if (ramBadge && activeEmbedder) {
-          const estMb = estimateOnnxRamFootprintMb(activeEmbedder);
-          ramBadge.textContent = `RAM: ~${estMb} MB (ONNX)`;
-        }
+      if (ramBadge && activeEmbedder) {
+        const estMb = estimateOnnxRamFootprintMb(activeEmbedder);
+        ramBadge.textContent = `RAM: ~${estMb} MB (ONNX)`;
       }
     }
   });
 
   btnRevokeConsent?.addEventListener('click', async () => {
     if (controller) {
-      await controller.revokeConsent();
       if (consentStatus) consentStatus.textContent = 'AI: Opt-In';
       if (btnGrantConsent) btnGrantConsent.style.display = 'inline-block';
       if (btnRevokeConsent) btnRevokeConsent.style.display = 'none';
       if (ramBadge) ramBadge.textContent = 'RAM: ~0 MB (Revoked)';
+      await controller.revokeConsent();
     }
   });
 }

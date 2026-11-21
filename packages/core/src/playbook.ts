@@ -11,6 +11,7 @@ import {
   PlaybookRule,
   PlaybookTarget,
 } from './types.js';
+import { tokenizeWords } from './negation.js';
 
 export function defineHarness(config: HarnessConfig): HarnessConfig {
   return config;
@@ -38,7 +39,10 @@ export function expandGlossaryTokens(
     if (Array.isArray(direct)) {
       for (const syn of direct) {
         if (out.size >= maxTokens) break;
-        out.add(syn.toLowerCase());
+        for (const w of tokenizeWords(syn)) {
+          if (out.size >= maxTokens) break;
+          out.add(w);
+        }
       }
     }
 
@@ -46,10 +50,16 @@ export function expandGlossaryTokens(
     for (const [key, synList] of Object.entries(glossary)) {
       if (out.size >= maxTokens) break;
       if (Array.isArray(synList) && synList.some((s) => s.toLowerCase() === lower)) {
-        out.add(key.toLowerCase());
+        for (const w of tokenizeWords(key)) {
+          if (out.size >= maxTokens) break;
+          out.add(w);
+        }
         for (const s of synList) {
           if (out.size >= maxTokens) break;
-          out.add(s.toLowerCase());
+          for (const w of tokenizeWords(s)) {
+            if (out.size >= maxTokens) break;
+            out.add(w);
+          }
         }
       }
     }
@@ -116,16 +126,23 @@ function branchMatches(branch: PlaybookBranch, ctx: PlaybookEvalContext): boolea
   // 2. User role check
   if (cond.userRole) {
     if (!ctx.user) return false;
-    const allowed = Array.isArray(cond.userRole) ? cond.userRole : [cond.userRole];
-    const userRoles = ctx.user.roles || (ctx.user.role ? [ctx.user.role] : []);
+    const allowed = (Array.isArray(cond.userRole) ? cond.userRole : [cond.userRole]).map((r) =>
+      r.toLowerCase().trim()
+    );
+    const userRoles = (ctx.user.roles || (ctx.user.role ? [ctx.user.role] : [])).map((r) =>
+      r.toLowerCase().trim()
+    );
     if (!allowed.some((r) => userRoles.includes(r))) return false;
   }
 
   // 3. User tier check
   if (cond.userTier) {
     if (!ctx.user || !ctx.user.tier) return false;
-    const allowed = Array.isArray(cond.userTier) ? cond.userTier : [cond.userTier];
-    if (!allowed.includes(ctx.user.tier)) return false;
+    const allowed = (Array.isArray(cond.userTier) ? cond.userTier : [cond.userTier]).map((t) =>
+      t.toLowerCase().trim()
+    );
+    const userTier = ctx.user.tier.toLowerCase().trim();
+    if (!allowed.includes(userTier)) return false;
   }
 
   // 4. DOM Snapshot checks
@@ -154,8 +171,12 @@ function branchMatches(branch: PlaybookBranch, ctx: PlaybookEvalContext): boolea
   }
 
   // 5. Custom predicate
-  if (cond.predicate && !cond.predicate(ctx)) {
-    return false;
+  if (cond.predicate) {
+    try {
+      if (!cond.predicate(ctx)) return false;
+    } catch {
+      return false;
+    }
   }
 
   return true;

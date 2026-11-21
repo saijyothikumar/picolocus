@@ -98,6 +98,7 @@ export class SilentMIController implements SilentMIClient {
   private habitStorage: 'local' | 'session' | 'memory' | 'off';
   private habitStorageKey: string;
   private routeListener?: () => void;
+  private isDestroyed = false;
 
   constructor(config: SilentMIConfig = {}) {
     this.config = config;
@@ -173,6 +174,7 @@ export class SilentMIController implements SilentMIClient {
   private async init(): Promise<void> {
     // 1. Fetch manifests if URLs provided
     await this.loadConfiguredManifests();
+    if (this.isDestroyed) return;
 
     // 2. Harvest live DOM controls
     if (this.config.autoHarvestDom !== false && typeof document !== 'undefined') {
@@ -180,10 +182,14 @@ export class SilentMIController implements SilentMIClient {
       this.engine.addItems(domItems);
 
       this.domIndexer.startObserving(document.body, () => {
+        if (this.isDestroyed) return;
         const refreshedDom = this.domIndexer.harvestDom();
         // Replace dom items while retaining manifest items
         const manifestOnly = this.engine.getItems().filter((i: ManifestItem) => i.source === 'manifest');
         this.engine.setItems([...manifestOnly, ...refreshedDom]);
+        if (this.embedder && (typeof this.embedder.isConsented !== 'function' || this.embedder.isConsented() !== false)) {
+          void this.domIndexer.syncDomEmbeddings(refreshedDom, this.embedder);
+        }
         if (this.activeQuery) {
           void this.query(this.activeQuery);
         }
@@ -195,12 +201,14 @@ export class SilentMIController implements SilentMIClient {
       if (typeof this.embedder.isConsented !== 'function' || this.embedder.isConsented() !== false) {
         try {
           await this.embedder.warmup();
+          if (this.isDestroyed) return;
           await this.domIndexer.syncDomEmbeddings(this.engine.getItems(), this.embedder);
         } catch {
           // Fallback to pure lexical mode
         }
       }
     }
+    if (this.isDestroyed) return;
 
     // 4. Setup popstate / hashchange listeners for route transitions
     if (typeof window !== 'undefined') {
@@ -347,21 +355,24 @@ export class SilentMIController implements SilentMIClient {
       this.session.cancelPendingDrawerGuidance();
     }
 
-    // Stage 2: Coalesced EmbedderPlugin refinement (if embedder active, consented, and ready)
+    // Stage 2: Coalesced EmbedderPlugin refinement (if embedder active and consented)
     if (
       this.embedder &&
       this.embedder.isEnabled &&
-      this.embedder.isReady &&
       (typeof this.embedder.isConsented !== 'function' || this.embedder.isConsented() !== false)
     ) {
+      const requestedQuery = this.activeQuery;
       try {
-        const qVec = await this.embedder.embedQuery(this.activeQuery);
+        const qVec = await this.embedder.embedQuery(requestedQuery);
+        if (this.isDestroyed || this.activeQuery !== requestedQuery) {
+          return instantResult;
+        }
         if (qVec) {
-          const hybridResult = this.engine.search(this.activeQuery, qVec, effectiveUser);
+          const hybridResult = this.engine.search(requestedQuery, qVec, effectiveUser);
           currentMatches = [...hybridResult.matches];
           this.applyViewportTieBreaker(currentMatches);
 
-          this.session.setSession(this.activeQuery, currentMatches);
+          this.session.setSession(requestedQuery, currentMatches);
           this.spotlightBar?.updateMatches(currentMatches, 0);
 
           const updatedFirst = this.session.getCurrent();
@@ -588,6 +599,7 @@ export class SilentMIController implements SilentMIClient {
   }
 
   destroy(): void {
+    this.isDestroyed = true;
     if (this.routeListener && typeof window !== 'undefined') {
       window.removeEventListener('popstate', this.routeListener);
       window.removeEventListener('hashchange', this.routeListener);

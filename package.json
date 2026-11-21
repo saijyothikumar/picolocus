@@ -22,7 +22,7 @@
   "license": "Apache-2.0",
   "type": "module",
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=20.9.0"
   },
   "workspaces": [
     "packages/*",
@@ -44,7 +44,7 @@
     "test:queries": "node --import tsx packages/cli/src/bin.ts test-queries --config sandbox/demo-saas/picolocus.config.json --queries sandbox/demo-saas/golden-queries.json",
     "presmoke:model": "npm run build",
     "smoke:model": "node --import tsx packages/cli/src/bin.ts smoke --config sandbox/demo-saas/picolocus.config.json --models-dir sandbox/demo-saas/public/models",
-    "pack:sdk": "node -e \"import('node:fs').then(f=>f.mkdirSync('release', {recursive:true}))\" && npm pack --workspace=@picolocus/core --workspace=@picolocus/web --workspace=@picolocus/onnx --workspace=@picolocus/cli --pack-destination ./release",
+    "pack:sdk": "node -e \"import('node:fs').then(f=>{f.rmSync('release',{recursive:true,force:true});f.mkdirSync('release',{recursive:true});})\" && npm pack --workspace=@picolocus/core --workspace=@picolocus/web --workspace=@picolocus/onnx --workspace=@picolocus/cli --pack-destination ./release",
     "dev": "npx vite sandbox/demo-saas",
     "test": "vitest run",
     "test:watch": "vitest",

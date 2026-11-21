@@ -10,9 +10,9 @@
                     "preview":  "vite preview"
                 },
     "dependencies":  {
-                         "@picolocus/core":  "^1.0.0",
-                         "@picolocus/web":  "^1.0.0",
-                         "@picolocus/onnx":  "^1.0.0"
+                         "@picolocus/core":  "^1.0.1",
+                         "@picolocus/web":  "^1.0.1",
+                         "@picolocus/onnx":  "^1.0.1"
                      },
     "devDependencies":  {
                             "typescript":  "^5.7.2",

@@ -43,15 +43,15 @@ jobs:
       - name: Build SDK packages
         run: npm run build
 
+      - name: Download model weights for demo
+        run: node scripts/download-model.mjs
+
       - name: Scan & compile manifests
         run: npm run scan
 
       - name: Setup GitHub Pages configuration
         id: pages
         uses: actions/configure-pages@v5
-
-      - name: Download model weights for demo
-        run: node scripts/download-model.mjs
 
       - name: Build demo workbench for production
         run: npm run build:demo
