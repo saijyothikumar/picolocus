@@ -1,66 +1,360 @@
 [
   {
+    "query": "Save Profile",
+    "expectedTopId": "btn-save-profile",
+    "expectedDecision": "choice",
+    "category": "affirmative_ui_actions"
+  },
+  {
+    "query": "Change Password",
+    "expectedTopId": "btn-change-password",
+    "expectedDecision": "choice",
+    "category": "affirmative_ui_actions"
+  },
+  {
+    "query": "Toggle Dark Mode",
+    "expectedTopId": "btn-dark-mode",
+    "expectedDecision": "choice",
+    "category": "affirmative_ui_actions"
+  },
+  {
+    "query": "Import Team Contacts",
+    "expectedTopId": "btn-import-contacts",
+    "expectedDecision": "choice",
+    "category": "affirmative_ui_actions"
+  },
+  {
+    "query": "Configure Webhooks",
+    "expectedTopId": "sec-trigger",
+    "expectedDecision": "choice",
+    "category": "affirmative_ui_actions"
+  },
+  {
+    "query": "Add Webhook Endpoint",
+    "expectedTopId": "btn-webhook",
+    "expectedDecision": "choice",
+    "category": "affirmative_ui_actions"
+  },
+  {
+    "query": "Open Tax Modal",
+    "expectedTopId": "btn-open-tax-modal",
+    "expectedDecision": "choice",
+    "category": "affirmative_ui_actions"
+  },
+  {
+    "query": "Upgrade to Pro",
+    "expectedTopId": "btn-upgrade-pro",
+    "expectedDecision": "choice",
+    "category": "affirmative_ui_actions"
+  },
+  {
+    "query": "f2a",
+    "expectedTopId": "btn-setup-2fa",
+    "expectedDecision": "choice",
+    "category": "typos_and_transpositions"
+  },
+  {
+    "query": "save prfile",
+    "expectedTopId": "btn-save-profile",
+    "expectedDecision": "choice",
+    "category": "typos_and_transpositions"
+  },
+  {
+    "query": "webhoks",
+    "expectedTopId": "sec-trigger",
+    "expectedDecision": "choice",
+    "category": "typos_and_transpositions"
+  },
+  {
+    "query": "chagne password",
+    "expectedTopId": "btn-change-password",
+    "expectedDecision": "choice",
+    "category": "typos_and_transpositions"
+  },
+  {
+    "query": "dark mdoe",
+    "expectedTopId": "btn-dark-mode",
+    "expectedDecision": "choice",
+    "category": "typos_and_transpositions"
+  },
+  {
+    "query": "imprt contacts",
+    "expectedTopId": "btn-import-contacts",
+    "expectedDecision": "choice",
+    "category": "typos_and_transpositions"
+  },
+  {
     "query": "how do I enter my EU VAT number?",
     "expectedTopId": "item-tax-vat",
     "expectedDecision": "choice",
-    "expectOOD": false,
-    "category": "harness_item"
+    "category": "conversational_paraphrases"
   },
   {
-    "query": "set up Okta single sign-on",
-    "expectedTopId": "playbook-configure-sso",
-    "expectOOD": false,
-    "user": {
-      "tier": "free",
-      "appState": {
-        "tier": "free"
-      }
-    },
-    "category": "playbook_free_upgrade"
+    "query": "where do I put my VAT ID?",
+    "expectedTopId": "item-tax-vat",
+    "expectedDecision": "choice",
+    "category": "conversational_paraphrases"
   },
   {
-    "query": "configure SAML authentication",
-    "expectedTopId": "playbook-configure-sso",
-    "expectOOD": false,
-    "user": {
-      "tier": "pro",
-      "appState": {
-        "tier": "pro",
-        "ssoConfigured": false
-      }
-    },
-    "category": "playbook_sso_toggle"
+    "query": "add tax registration number",
+    "expectedTopId": "item-tax-vat",
+    "expectedDecision": "choice",
+    "category": "conversational_paraphrases"
   },
   {
-    "query": "connect enterprise identity provider",
-    "expectedTopId": "playbook-configure-sso",
-    "expectOOD": false,
-    "user": {
-      "tier": "enterprise",
-      "appState": {
-        "tier": "enterprise",
-        "ssoConfigured": true
-      }
-    },
-    "category": "playbook_sso_idp"
+    "query": "switch to dark theme",
+    "expectedTopId": "btn-dark-mode",
+    "expectedDecision": "choice",
+    "category": "conversational_paraphrases"
+  },
+  {
+    "query": "modify account password",
+    "expectedTopId": "btn-change-password",
+    "expectedDecision": "choice",
+    "category": "conversational_paraphrases"
+  },
+  {
+    "query": "import employee contacts",
+    "expectedTopId": "btn-import-contacts",
+    "expectedDecision": "choice",
+    "category": "conversational_paraphrases"
+  },
+  {
+    "query": "Umbrella Corp paid invoice #TX-900",
+    "expectedTopId": "row-tx-900",
+    "expectedDecision": "choice",
+    "category": "dynamic_table_rows"
+  },
+  {
+    "query": "Hooli pending invoice #TX-901",
+    "expectedTopId": "row-tx-901",
+    "expectedDecision": "choice",
+    "category": "dynamic_table_rows"
+  },
+  {
+    "query": "Pied Piper paid invoice #TX-902",
+    "expectedTopId": "row-tx-902",
+    "expectedDecision": "choice",
+    "category": "dynamic_table_rows"
+  },
+  {
+    "query": "Cyberdyne paid invoice #TX-903",
+    "expectedTopId": "row-tx-903",
+    "expectedDecision": "choice",
+    "category": "dynamic_table_rows"
+  },
+  {
+    "query": "Acme Corp paid invoice #TX-904",
+    "expectedTopId": "row-tx-904",
+    "expectedDecision": "choice",
+    "category": "dynamic_table_rows"
+  },
+  {
+    "query": "Globex pending invoice #TX-905",
+    "expectedTopId": "row-tx-905",
+    "expectedDecision": "choice",
+    "category": "dynamic_table_rows"
+  },
+  {
+    "query": "Soylent Inc paid invoice #TX-906",
+    "expectedTopId": "row-tx-906",
+    "expectedDecision": "choice",
+    "category": "dynamic_table_rows"
+  },
+  {
+    "query": "Initech paid invoice #TX-907",
+    "expectedTopId": "row-tx-907",
+    "expectedDecision": "choice",
+    "category": "dynamic_table_rows"
+  },
+  {
+    "query": "Cyberdyne paid bill #TX-911",
+    "expectedTopId": "row-tx-911",
+    "expectedDecision": "choice",
+    "category": "dynamic_table_rows"
+  },
+  {
+    "query": "Pied Piper billing row #TX-910",
+    "expectedTopId": "row-tx-910",
+    "expectedDecision": "choice",
+    "category": "dynamic_table_rows"
   },
   {
     "query": "do not delete workspace",
     "expectOOD": true,
     "expectedDecision": "noul",
     "notExpectedIds": ["btn-delete-workspace"],
-    "category": "negation_intent_gate"
+    "user": { "role": "admin" },
+    "category": "pure_negation_intent_gate"
+  },
+  {
+    "query": "never purge database",
+    "expectOOD": true,
+    "expectedDecision": "noul",
+    "notExpectedIds": ["btn-purge-db"],
+    "user": { "role": "admin" },
+    "category": "pure_negation_intent_gate"
+  },
+  {
+    "query": "do not save profile",
+    "expectOOD": true,
+    "expectedDecision": "noul",
+    "notExpectedIds": ["btn-save-profile"],
+    "category": "pure_negation_intent_gate"
+  },
+  {
+    "query": "never change password",
+    "expectOOD": true,
+    "expectedDecision": "noul",
+    "notExpectedIds": ["btn-change-password"],
+    "category": "pure_negation_intent_gate"
+  },
+  {
+    "query": "do not configure webhooks",
+    "expectOOD": true,
+    "expectedDecision": "noul",
+    "notExpectedIds": ["sec-trigger", "btn-webhook"],
+    "category": "pure_negation_intent_gate"
+  },
+  {
+    "query": "cannot export audit data",
+    "expectOOD": true,
+    "expectedDecision": "noul",
+    "notExpectedIds": ["btn-export-data"],
+    "user": { "tier": "enterprise" },
+    "category": "pure_negation_intent_gate"
+  },
+  {
+    "query": "never import team contacts",
+    "expectOOD": true,
+    "expectedDecision": "noul",
+    "notExpectedIds": ["btn-import-contacts"],
+    "category": "pure_negation_intent_gate"
+  },
+  {
+    "query": "all invoices except #TX-903",
+    "expectOOD": true,
+    "expectedDecision": "noul",
+    "notExpectedIds": ["row-tx-903", "btn-tx-903"],
+    "category": "exception_negations"
+  },
+  {
+    "query": "view invoice #TX-902 except #TX-903",
+    "expectedTopId": "btn-tx-902",
+    "expectedDecision": "choice",
+    "notExpectedIds": ["row-tx-903", "btn-tx-903"],
+    "category": "exception_negations"
   },
   {
     "query": "do not sell personal email",
-    "expectOOD": false,
+    "expectedTopId": "doc-clause-bf125410",
     "expectedDecision": "choice",
-    "category": "self_negated_policy_clause"
+    "category": "self_negated_policy_clauses"
+  },
+  {
+    "query": "never trade contact logs",
+    "expectedTopId": "doc-clause-bf125410",
+    "expectedDecision": "choice",
+    "category": "self_negated_policy_clauses"
+  },
+  {
+    "query": "do not rent communication logs",
+    "expectedTopId": "doc-clause-bf125410",
+    "expectedDecision": "choice",
+    "category": "self_negated_policy_clauses"
   },
   {
     "query": "xyzq_unrelated_random_gibberish_999",
     "expectOOD": true,
     "expectedDecision": "noul",
-    "category": "ood_rejection"
+    "category": "out_of_distribution"
+  },
+  {
+    "query": "order pepperoni pizza for dinner",
+    "expectOOD": true,
+    "expectedDecision": "noul",
+    "category": "out_of_distribution"
+  },
+  {
+    "query": "what is the capital of France?",
+    "expectOOD": true,
+    "expectedDecision": "noul",
+    "category": "out_of_distribution"
+  },
+  {
+    "query": "book a flight to San Francisco tomorrow",
+    "expectOOD": true,
+    "expectedDecision": "noul",
+    "category": "out_of_distribution"
+  },
+  {
+    "query": "how to play acoustic guitar chords",
+    "expectOOD": true,
+    "expectedDecision": "noul",
+    "category": "out_of_distribution"
+  },
+  {
+    "query": "quantum entanglement supercomputing simulation",
+    "expectOOD": true,
+    "expectedDecision": "noul",
+    "category": "out_of_distribution"
+  },
+  {
+    "query": "set up Okta single sign-on",
+    "expectedTopId": "playbook-configure-sso",
+    "expectedDecision": "choice",
+    "user": { "tier": "free", "appState": { "tier": "free" } },
+    "category": "stateful_playbooks_and_tier_locks"
+  },
+  {
+    "query": "verify corporate domain",
+    "expectedTopId": "btn-verify-domain",
+    "expectedDecision": "choice",
+    "user": { "tier": "pro", "appState": { "tier": "pro" } },
+    "category": "stateful_playbooks_and_tier_locks"
+  },
+  {
+    "query": "configure SAML authentication",
+    "expectedTopId": "playbook-configure-sso",
+    "expectedDecision": "choice",
+    "user": { "tier": "pro", "appState": { "tier": "pro", "ssoConfigured": false } },
+    "category": "stateful_playbooks_and_tier_locks"
+  },
+  {
+    "query": "connect enterprise identity provider",
+    "expectedTopId": "playbook-configure-sso",
+    "expectedDecision": "choice",
+    "user": { "tier": "enterprise", "appState": { "tier": "enterprise", "ssoConfigured": true } },
+    "category": "stateful_playbooks_and_tier_locks"
+  },
+  {
+    "query": "delete workspace",
+    "expectOOD": true,
+    "expectedDecision": "noul",
+    "notExpectedIds": ["btn-delete-workspace"],
+    "user": { "role": "viewer" },
+    "category": "role_based_access_control"
+  },
+  {
+    "query": "purge database",
+    "expectOOD": true,
+    "expectedDecision": "noul",
+    "notExpectedIds": ["btn-purge-db"],
+    "user": { "role": "viewer" },
+    "category": "role_based_access_control"
+  },
+  {
+    "query": "delete workspace",
+    "expectedTopId": "btn-delete-workspace",
+    "expectedDecision": "choice",
+    "user": { "role": "admin" },
+    "category": "role_based_access_control"
+  },
+  {
+    "query": "purge database",
+    "expectedTopId": "btn-purge-db",
+    "expectedDecision": "choice",
+    "user": { "role": "admin" },
+    "category": "role_based_access_control"
   }
 ]

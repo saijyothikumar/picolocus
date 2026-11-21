@@ -130,9 +130,24 @@ export class TestQueriesRunner {
     console.log(`[+] Executing ${testCases.length} query assertions...`);
     let passedCount = 0;
     const failures: string[] = [];
+    const categoryStats = new Map<string, { total: number; passed: number }>();
 
     for (let i = 0; i < testCases.length; i++) {
       const tc = testCases[i]!;
+      const cat = tc.category || 'general';
+      if (!categoryStats.has(cat)) {
+        categoryStats.set(cat, { total: 0, passed: 0 });
+      }
+      categoryStats.get(cat)!.total++;
+
+      // Normalize array disabledSelectors from JSON to Set
+      if (
+        tc.user?.domContext?.disabledSelectors &&
+        Array.isArray(tc.user.domContext.disabledSelectors)
+      ) {
+        tc.user.domContext.disabledSelectors = new Set(tc.user.domContext.disabledSelectors);
+      }
+
       const start = performance.now();
 
       let res;
@@ -197,6 +212,7 @@ export class TestQueriesRunner {
 
       if (casePassed) {
         passedCount++;
+        categoryStats.get(cat)!.passed++;
         console.log(`  [OK] "${tc.query}" -> ${topMatch?.id ?? 'OOD'} [${res.decision}] (${elapsed} ms)`);
       } else {
         const failMsg = `Query "${tc.query}": ${caseErrors.join(', ')}`;
@@ -205,7 +221,27 @@ export class TestQueriesRunner {
       }
     }
 
-    console.log(`\n[SUMMARY] Passed ${passedCount}/${testCases.length} test queries.`);
+    console.log('\n[CATEGORY ACCURACY BREAKDOWN]');
+    console.log('-'.repeat(64));
+    console.log(
+      'Category'.padEnd(38) +
+      'Passed / Total'.padEnd(16) +
+      'Accuracy'
+    );
+    console.log('-'.repeat(64));
+    for (const [catName, stats] of categoryStats.entries()) {
+      const rate = ((stats.passed / stats.total) * 100).toFixed(1) + '%';
+      const countStr = `${stats.passed} / ${stats.total}`;
+      console.log(catName.padEnd(38) + countStr.padEnd(16) + rate);
+    }
+    console.log('-'.repeat(64));
+    const totalRate = ((passedCount / testCases.length) * 100).toFixed(1) + '%';
+    console.log(
+      `OVERALL ACCURACY:`.padEnd(38) +
+      `${passedCount} / ${testCases.length}`.padEnd(16) +
+      totalRate
+    );
+    console.log('-'.repeat(64));
 
     if (failures.length > 0) {
       return {
@@ -214,6 +250,6 @@ export class TestQueriesRunner {
       };
     }
 
-    return { passed: true, message: 'All test queries passed successfully' };
+    return { passed: true, message: `All ${testCases.length} test queries passed with 100.0% accuracy.` };
   }
 }
