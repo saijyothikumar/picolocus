@@ -1,6 +1,6 @@
 {
     "name":  "picolocus-demo-saas",
-    "version":  "1.0.1",
+    "version":  "1.0.2",
     "private":  true,
     "license": "Apache-2.0",
     "type":  "module",
@@ -10,9 +10,9 @@
                     "preview":  "vite preview"
                 },
     "dependencies":  {
-                         "@picolocus/core":  "^1.0.1",
-                         "@picolocus/web":  "^1.0.1",
-                         "@picolocus/onnx":  "^1.0.1"
+                         "@picolocus/core":  "^1.0.2",
+                         "@picolocus/web":  "^1.0.2",
+                         "@picolocus/onnx":  "^1.0.2"
                      },
     "devDependencies":  {
                             "typescript":  "^5.7.2",

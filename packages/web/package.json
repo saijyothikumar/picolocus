@@ -1,6 +1,6 @@
 {
   "name": "@picolocus/web",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Zero-dependency pure CSS highlighter, DOM indexer, and non-modal docked locator bar for @picolocus",
   "author": "Sai Jyothi Kumar <saikumarjyo14@gmail.com>",
   "homepage": "https://github.com/saijyothikumar/picolocus/tree/main/packages/web#readme",
@@ -41,7 +41,7 @@
   },
   "dependencies": {},
   "peerDependencies": {
-    "@picolocus/core": "^1.0.1"
+    "@picolocus/core": "^1.0.2"
   },
   "peerDependenciesMeta": {
     "@picolocus/core": {
