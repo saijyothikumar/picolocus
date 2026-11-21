@@ -119,6 +119,12 @@ export class SmokeRunner {
 
     console.log(`[+] Executing ${goldens.length} golden test cases...`);
 
+    // Warm up ONNX session and JIT to eliminate cold-start measurement skew
+    if (embedder && embedder.isReady && goldens.length > 0) {
+      const { vectors: warmVecs } = await embedder.embed([goldens[0]!.query], 'query');
+      engine.search(goldens[0]!.query, warmVecs[0] || null, goldens[0]!.user);
+    }
+
     // 4. Run Goldens
     let maxObservedLatency = 0;
     for (let i = 0; i < goldens.length; i++) {

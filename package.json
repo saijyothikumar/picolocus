@@ -1,6 +1,6 @@
 {
   "name": "picolocus-monorepo",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Modular client-side micro-intelligence SDK providing non-destructive UI navigation, hybrid search, and verbatim clause highlighting without chat or LLM hallucinations",
   "author": "Sai Jyothi Kumar <saikumarjyo14@gmail.com>",
   "homepage": "https://github.com/saijyothikumar/picolocus#readme",

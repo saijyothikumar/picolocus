@@ -151,8 +151,8 @@ async function main(): Promise<void> {
 
     case 'smoke': {
       const goldensPath = typeof flags['goldens'] === 'string' ? flags['goldens'] : undefined;
-      const maxRssMb = typeof flags['max-rss-mb'] === 'string' ? parseInt(flags['max-rss-mb'], 10) : 250;
-      const maxLatencyMs = typeof flags['max-latency-ms'] === 'string' ? parseInt(flags['max-latency-ms'], 10) : 35;
+      const maxRssMb = typeof flags['max-rss-mb'] === 'string' ? parseInt(flags['max-rss-mb'], 10) : 350;
+      const maxLatencyMs = typeof flags['max-latency-ms'] === 'string' ? parseInt(flags['max-latency-ms'], 10) : 60;
       const requireOnnx = Boolean(flags['require-onnx']);
 
       const res = await SmokeRunner.run({

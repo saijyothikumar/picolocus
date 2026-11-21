@@ -1,6 +1,6 @@
 {
     "name":  "@picolocus/core",
-    "version":  "1.0.0",
+    "version":  "1.0.1",
     "description":  "Zero-dependency hybrid engine, negation gate, Int8 quantization, and generalized RBAC for @picolocus",
     "author": "Sai Jyothi Kumar <saikumarjyo14@gmail.com>",
     "homepage": "https://github.com/saijyothikumar/picolocus/tree/main/packages/core#readme",

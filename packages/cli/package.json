@@ -1,6 +1,6 @@
 {
     "name":  "@picolocus/cli",
-    "version":  "1.0.0",
+    "version":  "1.0.1",
     "description":  "Build-time HTML/JSX scanner, physical RBAC manifest compiler, smoke runner and golden query simulator for @picolocus",
     "author": "Sai Jyothi Kumar <saikumarjyo14@gmail.com>",
     "homepage": "https://github.com/saijyothikumar/picolocus/tree/main/packages/cli#readme",

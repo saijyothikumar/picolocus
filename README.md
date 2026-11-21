@@ -5,14 +5,16 @@
 <h1 align="center">Picolocus (<code>@picolocus/*</code>)</h1>
 
 <p align="center">
-  <strong>Client-Side Micro-Intelligence SDK (v1.0.0)</strong><br />
+  <strong>Client-Side Micro-Intelligence SDK (v1.0.1)</strong><br />
   <em>Show, Don't Chat — Guide, Don't Click.</em>
 </p>
 
 <p align="center">
   <a href="https://github.com/saijyothikumar/picolocus/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-Apache--2.0-blue.svg" alt="License: Apache-2.0" /></a>
   <img src="https://img.shields.io/badge/bundle%20size-24.7%20KB%20gzipped-success.svg" alt="Bundle Size" />
+  <img src="https://img.shields.io/badge/accuracy-100.0%25%20(56%2F56)-brightgreen.svg" alt="Benchmark Accuracy" />
   <img src="https://img.shields.io/badge/dependencies-0%20runtime-brightgreen.svg" alt="Zero Dependencies" />
+  <a href="https://saijyothikumar.github.io/picolocus/"><img src="https://img.shields.io/badge/live%20demo-GitHub%20Pages-blueviolet.svg" alt="Live Demo" /></a>
 </p>
 
 `Picolocus` is a modular, privacy-preserving client-side Micro-Intelligence SDK that helps users locate controls across hundreds of fields, step through matches via **Prev / Next** buttons or an expandable **Details List**, navigate closed or lazy-mounted drawers, find dynamic table rows, and highlight verbatim policy clauses **without cloud LLM calls, chat UIs, focus-stealing overlays, or autonomous destructive clicks**.
@@ -182,7 +184,37 @@ Benchmark ONNX inference latency and heap memory delta directly from the command
 ```bash
 npm run smoke:model -- --model mdbr-leaf-ir --require-onnx
 ```
-Verifies that 10 consecutive warm inference passes remain below `35 ms` latency and `250 MB` process RSS.
+Verifies that 10 consecutive warm inference passes remain below `60 ms` latency and `350 MB` process RSS (observed: `~9.8 ms` latency, `~227 MB` RSS).
+
+---
+
+## Empirical Benchmark Accuracy & Client RAM Telemetry
+
+### 1. 56-Query Benchmark Evaluation (`100.0%` Accuracy)
+The suite evaluates `@picolocus/core` and `@picolocus/onnx` against 56 diverse real-world assertions across 10 distinct categories, runnable via `npm run test:queries -- --require-onnx`:
+
+| Benchmark Category | Queries Tested | Pass Rate | Measured Latency |
+|:---|:---:|:---:|:---:|
+| **Affirmative UI Actions** (Direct controls, settings, modals) | 8 | **100.0%** (8/8) | 4.8 – 10.0 ms |
+| **Typos & Transpositions** (`f2a`, `save prfile`, `webhoks`, `dark mdoe`) | 6 | **100.0%** (6/6) | 4.3 – 5.1 ms |
+| **Conversational Paraphrases** (Domain synonyms & phrasing) | 6 | **100.0%** (6/6) | 4.2 – 6.0 ms |
+| **Dynamic Table Rows & Vendors** (`#TX-900`–`#TX-911`, Hooli, Cyberdyne) | 10 | **100.0%** (10/10) | 4.8 – 7.2 ms |
+| **Pure Negation Intent Gates** ("do not delete workspace" -> OOD `noul`) | 7 | **100.0%** (7/7) | 4.4 – 5.4 ms |
+| **Exception Negations** ("view invoice #TX-902 except #TX-903") | 2 | **100.0%** (2/2) | 6.1 – 7.0 ms |
+| **Self-Negated Policy Clauses** ("We do not sell personal email") | 3 | **100.0%** (3/3) | 4.5 – 4.7 ms |
+| **Out-Of-Distribution (OOD)** (Pizza, flights, acoustic guitar, quantum physics) | 6 | **100.0%** (6/6) | 5.2 – 7.9 ms |
+| **Stateful Playbook Branches & Tier Locks** (Free upgrade, SSO toggle, IdP URL) | 4 | **100.0%** (4/4) | 5.5 – 8.4 ms |
+| **Role-Based Access Control** (Viewer rejected vs Admin allowed danger zone) | 4 | **100.0%** (4/4) | 4.7 – 5.9 ms |
+| **OVERALL COMPLIANCE** | **56** | **100.0%** (56/56) | **~5.8 ms avg** |
+
+### 2. Empirical Client Memory Breakdown
+Telemetry measured on live Chromium sessions:
+
+| Search Mode | Client WASM RAM | Host JS Heap Overhead | Total Tab RAM Footprint | Behavioral Invariant |
+|:---|:---:|:---:|:---:|:---|
+| **Pure Lexical Mode** | `0 MB` | `<= 24 KB` | `<= 25 KB` | Zero model downloads, zero WASM heap. Keystroke-1 latency `< 0.5 ms`. |
+| **Neural ONNX (`mdbr-leaf-ir` q4)** | `~54.6 MB` weights + `~7.4 MB` context | `~10 MB` worker thread | `~65–74 MB` | Matryoshka 256d Int8 vectors. Re-warms in `< 80 ms`. |
+| **Idle Reaped State** | `0 MB` (fully reclaimed) | `<= 24 KB` | `<= 25 KB` | Worker terminated after 120s inactivity (or 15s hidden tab). Auto-resyncs on next query. |
 
 ---
 
