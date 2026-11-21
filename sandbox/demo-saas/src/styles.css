@@ -265,7 +265,7 @@ tr:hover {
 }
 
 /* Native CSS Highlights Styles */
-::highlight(smi-clause-highlight) {
+::highlight(silent-mi-clause) {
   background-color: rgba(99, 102, 241, 0.35);
   color: #ffffff;
 }

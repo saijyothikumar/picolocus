@@ -128,6 +128,12 @@ export class SemanticEmbedderClient implements EmbedderPlugin {
       return this.warmupPromise;
     }
 
+    if (typeof Worker === 'undefined') {
+      return Promise.reject(
+        new Error('SemanticEmbedderClient: Web Workers are not supported in this environment')
+      );
+    }
+
     const p = new Promise<void>((resolve, reject) => {
       this.initReject = reject;
       try {
@@ -396,8 +402,7 @@ export class SemanticEmbedderClient implements EmbedderPlugin {
       this.worker = new Worker(this.config.workerUrl, { type: 'module' });
     } else {
       // Module worker URL ensuring same-origin worker-src 'self'
-      const workerUrl = new URL('./onnx-worker.js', import.meta.url);
-      this.worker = new Worker(workerUrl, { type: 'module' });
+      this.worker = new Worker(new URL('./onnx-worker.js', import.meta.url), { type: 'module' });
     }
 
     this.worker.onmessage = (e: MessageEvent<WorkerOutResponse>) => {

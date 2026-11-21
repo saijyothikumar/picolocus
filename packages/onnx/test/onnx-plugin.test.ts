@@ -2,12 +2,14 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import {
   createOnnxEmbedder,
   SemanticEmbedderClient,
-  OnnxWorkerEmbedder,
   LatestOnlyQueue,
   configureTransformersEnv,
+} from '../src/index.js';
+import {
+  OnnxWorkerEmbedder,
   setTestModelLoader,
   handleWorkerInit,
-} from '../src/index.js';
+} from '../src/onnx-worker.js';
 import { NoopEmbedder } from '@picolocus/core';
 
 describe('ONNX Environment Configuration', () => {

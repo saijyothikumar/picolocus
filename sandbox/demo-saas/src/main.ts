@@ -216,12 +216,14 @@ async function initSdk(activateTab: (hash: string) => void): Promise<void> {
     ? import.meta.env.BASE_URL
     : `${import.meta.env.BASE_URL}/`;
 
+  const absoluteModelsUrl = new URL(`${baseUrl}models`, window.location.origin).href;
+
   if (useOnnx) {
     try {
       const isEager = urlParams.get('consent') === 'eager';
       activeEmbedder = createOnnxEmbedder({
         modelId: 'mdbr-leaf-ir',
-        localModelPath: `${baseUrl}models/mdbr-leaf-ir`,
+        localModelPath: absoluteModelsUrl,
         idleTimeoutMs: 120000,
         consentMode: isEager ? 'eager' : 'opt-in',
         consentGranted: isEager,

@@ -149,7 +149,7 @@ export class ProseChunker {
       }
       if (!tierPolicy && curr.hasAttribute('data-mi-tier-policy')) {
         const pol = curr.getAttribute('data-mi-tier-policy')!.trim().toLowerCase();
-        if (pol === 'hide' || pol === 'upsell') {
+        if (pol === 'hide' || pol === 'upsell' || pol === 'spotlight_upsell') {
           tierPolicy = pol;
         }
       }

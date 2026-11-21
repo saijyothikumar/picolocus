@@ -6,5 +6,13 @@
 
 export * from './env-config.js';
 export * from './latest-only-queue.js';
-export * from './onnx-worker.js';
+export type {
+  WorkerInitMessage,
+  WorkerEmbedQueryMessage,
+  WorkerEmbedBatchMessage,
+  WorkerTerminateMessage,
+  WorkerInMessage,
+  WorkerOutResponse,
+  WorkerInitDoneResponse,
+} from './onnx-worker.js';
 export * from './worker-client.js';

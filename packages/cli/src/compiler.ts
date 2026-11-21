@@ -139,7 +139,8 @@ export class ManifestCompiler {
         }
       } else {
         // Restricted item: isolate into manifest.<role>.json
-        for (const role of item.roles!) {
+        const roles = item.roles && item.roles.length > 0 ? item.roles : ['authenticated'];
+        for (const role of roles) {
           const rLower = role.toLowerCase().trim();
           if (rLower === 'public') continue;
 

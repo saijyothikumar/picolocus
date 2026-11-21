@@ -99,7 +99,7 @@ export class DomRowIndexer {
       }
       if (!tierPolicy && curr.hasAttribute('data-mi-tier-policy')) {
         const pol = curr.getAttribute('data-mi-tier-policy')!.trim().toLowerCase();
-        if (pol === 'hide' || pol === 'upsell') {
+        if (pol === 'hide' || pol === 'upsell' || pol === 'spotlight_upsell') {
           tierPolicy = pol;
         }
       }
@@ -241,7 +241,7 @@ export class DomRowIndexer {
         id,
         targetType,
         label,
-        description: el.getAttribute('data-mi-description') || el.getAttribute('title') || undefined,
+        description: el.getAttribute('data-mi-description') || el.getAttribute('data-mi-body') || el.getAttribute('title') || undefined,
         selector,
         parentTriggerSelector,
         triggerChain,

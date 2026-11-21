@@ -31,7 +31,13 @@
                               "types":  "./dist/index.d.ts",
                               "import":  "./dist/index.js",
                               "default":  "./dist/index.js"
-                          }
+                          },
+                    "./worker": {
+                              "types":  "./dist/onnx-worker.d.ts",
+                              "import":  "./dist/onnx-worker.js",
+                              "default":  "./dist/onnx-worker.js"
+                          },
+                    "./onnx-worker.js": "./dist/onnx-worker.js"
                 },
     "files":  [
                   "dist"

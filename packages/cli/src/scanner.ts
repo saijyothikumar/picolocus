@@ -116,7 +116,7 @@ export class AstScanner {
             targetType,
             kind,
             label,
-            description: node.getAttribute('data-mi-description') || node.getAttribute('title') || undefined,
+            description: node.getAttribute('data-mi-description') || node.getAttribute('data-mi-body') || node.getAttribute('title') || undefined,
             route: node.getAttribute('href') || node.getAttribute('data-mi-route') || currentAuth.route || undefined,
             selector: node.id ? `#${node.id}` : `[data-mi-id="${id}"]`,
             parentTriggerSelector,
@@ -299,7 +299,7 @@ export class AstScanner {
     let tierPolicy = parent.tierPolicy;
     if (el.hasAttribute('data-mi-tier-policy')) {
       const pol = el.getAttribute('data-mi-tier-policy')!.trim().toLowerCase();
-      if (pol === 'hide' || pol === 'upsell') {
+      if (pol === 'hide' || pol === 'upsell' || pol === 'spotlight_upsell') {
         tierPolicy = pol;
       }
     }
@@ -338,7 +338,7 @@ export class AstScanner {
     let tierPolicy = parent.tierPolicy;
     if (attrs['data-mi-tier-policy']) {
       const pol = attrs['data-mi-tier-policy'].trim().toLowerCase();
-      if (pol === 'hide' || pol === 'upsell') {
+      if (pol === 'hide' || pol === 'upsell' || pol === 'spotlight_upsell') {
         tierPolicy = pol;
       }
     }

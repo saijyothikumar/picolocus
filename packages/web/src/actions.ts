@@ -324,11 +324,6 @@ export class MatchStepSession {
     const onTriggerKey = (e: Event) => {
       const kb = e as KeyboardEvent;
       if (kb.key === 'Enter' || kb.key === ' ') {
-        try {
-          kb.preventDefault();
-        } catch {
-          // Ignore
-        }
         void advanceStep();
       }
     };

@@ -343,6 +343,9 @@ export class VisualHighlighter {
       const rect = target.getBoundingClientRect();
       if (isPopover) {
         badge.style.position = 'fixed';
+        badge.style.inset = 'unset';
+        badge.style.bottom = 'auto';
+        badge.style.right = 'auto';
         badge.style.margin = '0';
         const top = Math.max(10, rect.top - 34);
         const left = Math.max(10, rect.left);
