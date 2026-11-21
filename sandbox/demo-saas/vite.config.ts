@@ -2,7 +2,7 @@ import { defineConfig } from 'vite';
 
 export default defineConfig({
   root: '.',
-  base: './',
+  base: process.env.VITE_BASE_URL || (process.env.GITHUB_ACTIONS ? '/picolocus/' : './'),
   server: {
     port: 5173,
     host: '127.0.0.1',
@@ -11,5 +11,8 @@ export default defineConfig({
   build: {
     target: 'es2022',
     outDir: 'dist',
+  },
+  worker: {
+    format: 'es',
   },
 });

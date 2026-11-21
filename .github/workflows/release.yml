@@ -1,6 +1,9 @@
 name: Publish Packages
 
 on:
+  push:
+    tags:
+      - 'v*'
   release:
     types: [published]
   workflow_dispatch:
@@ -12,7 +15,7 @@ on:
         default: true
 
 permissions:
-  contents: read
+  contents: write
   id-token: write
 
 env:
@@ -49,6 +52,12 @@ jobs:
       - name: Pack SDK tarballs
         run: npm run pack:sdk
 
+      - name: Upload SDK Tarballs Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: picolocus-sdk-tarballs
+          path: release/*.tgz
+
       - name: Publish to npm (Dry Run)
         if: ${{ inputs.dry_run }}
         run: |
@@ -60,7 +69,7 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish to npm
-        if: ${{ !inputs.dry_run && github.event_name == 'release' }}
+        if: ${{ (!inputs.dry_run && github.event_name == 'workflow_dispatch') || github.event_name == 'release' || startsWith(github.ref, 'refs/tags/v') }}
         run: |
           npm publish --workspace=@picolocus/core --access public --provenance
           npm publish --workspace=@picolocus/cli --access public --provenance
@@ -68,3 +77,9 @@ jobs:
           npm publish --workspace=@picolocus/onnx --access public --provenance
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Attach tarballs to GitHub Release
+        if: ${{ github.event_name == 'release' || startsWith(github.ref, 'refs/tags/v') }}
+        uses: softprops/action-gh-release@v2
+        with:
+          files: release/*.tgz

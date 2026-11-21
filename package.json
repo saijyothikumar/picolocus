@@ -31,6 +31,7 @@
   "scripts": {
     "audit": "npm audit --audit-level=high",
     "check": "npm run typecheck && npm run audit && npm test",
+    "download:model": "node scripts/download-model.mjs",
     "build": "npm run build --workspace=@picolocus/core && npm run build --workspace=@picolocus/cli && npm run build --workspace=@picolocus/web && npm run build --workspace=@picolocus/onnx",
     "build:demo": "npm run build --workspace=picolocus-demo-saas",
     "prescan": "npm run build",
