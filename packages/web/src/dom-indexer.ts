@@ -436,7 +436,7 @@ export class DomRowIndexer {
       for (let i = 0; i < mutations.length; i++) {
         const mut = mutations[i]!;
         const targetEl = mut.target instanceof Element ? mut.target : mut.target.parentElement;
-        if (targetEl && !targetEl.closest('[data-smi-ui="true"]')) {
+        if (targetEl && !targetEl.closest('[data-smi-ui="true"], [data-pico-ui="true"]')) {
           hasExternalMutation = true;
           break;
         }

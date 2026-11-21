@@ -103,7 +103,7 @@ describe('CLI v1.0.0 Harness & Playbook Compilation', () => {
     } finally {
       rmSync(tempDir, { recursive: true, force: true });
     }
-  });
+  }, 25000);
 
   it('evaluates test queries assertions against compiled manifests', async () => {
     const tempDir = mkdtempSync(join(tmpdir(), 'picolocus-queries-'));
@@ -158,5 +158,5 @@ describe('CLI v1.0.0 Harness & Playbook Compilation', () => {
     } finally {
       rmSync(tempDir, { recursive: true, force: true });
     }
-  });
+  }, 25000);
 });

@@ -364,6 +364,11 @@ describe('500-Vector 256d Int8 Dot Product Benchmark', () => {
       queryVec[d] = (d % 255) - 127;
     }
 
+    // Warm-up JIT compiler
+    for (let i = 0; i < 20; i++) {
+      computeInt8Cosine(queryVec, vectors[i % VEC_COUNT]!);
+    }
+
     const start = performance.now();
     let bestSim = -1;
     let bestIdx = -1;

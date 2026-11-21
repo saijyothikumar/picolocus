@@ -181,9 +181,16 @@ export class SilentMIController implements SilentMIClient {
       const domItems = this.domIndexer.harvestDom();
       this.engine.addItems(domItems);
 
+      let prevDomSignature = '';
       this.domIndexer.startObserving(document.body, () => {
         if (this.isDestroyed) return;
         const refreshedDom = this.domIndexer.harvestDom();
+        const currentSignature = `${refreshedDom.length}:${refreshedDom.map((i) => `${i.id}:${i.label}:${i.route || ''}:${i.liveStatus || ''}`).join(';')}`;
+        if (currentSignature === prevDomSignature) {
+          return;
+        }
+        prevDomSignature = currentSignature;
+
         // Replace dom items while retaining manifest items
         const manifestOnly = this.engine.getItems().filter((i: ManifestItem) => i.source === 'manifest');
         this.engine.setItems([...manifestOnly, ...refreshedDom]);
@@ -191,7 +198,15 @@ export class SilentMIController implements SilentMIClient {
           void this.domIndexer.syncDomEmbeddings(refreshedDom, this.embedder);
         }
         if (this.activeQuery) {
-          void this.query(this.activeQuery);
+          if (this.session.getTotal() === 0) {
+            void this.query(this.activeQuery);
+          } else {
+            const instantResult = this.engine.searchInstant(this.activeQuery, this.userContext);
+            const matches = [...instantResult.matches];
+            this.applyViewportTieBreaker(matches);
+            this.session.updateMatchesPreservingCurrent(matches);
+            this.spotlightBar?.updateMatches(this.session.getMatches(), this.session.getIndex());
+          }
         }
       });
     }
@@ -262,7 +277,15 @@ export class SilentMIController implements SilentMIClient {
       this.userContext = { ...this.userContext, appState: this.appState };
     }
     if (this.activeQuery) {
-      void this.query(this.activeQuery);
+      if (this.session.getTotal() === 0) {
+        void this.query(this.activeQuery);
+      } else {
+        const instantResult = this.engine.searchInstant(this.activeQuery, this.userContext);
+        const matches = [...instantResult.matches];
+        this.applyViewportTieBreaker(matches);
+        this.session.updateMatchesPreservingCurrent(matches);
+        this.spotlightBar?.updateMatches(this.session.getMatches(), this.session.getIndex());
+      }
     }
   }
 
@@ -372,15 +395,23 @@ export class SilentMIController implements SilentMIClient {
           currentMatches = [...hybridResult.matches];
           this.applyViewportTieBreaker(currentMatches);
 
-          this.session.setSession(requestedQuery, currentMatches);
-          this.spotlightBar?.updateMatches(currentMatches, 0);
-
-          const updatedFirst = this.session.getCurrent();
-          if (updatedFirst) {
-            void this.session.guideMatch(updatedFirst);
+          if (this.session.getIndex() > 0) {
+            // User already started stepping: preserve their active match/index
+            this.session.updateMatchesPreservingCurrent(currentMatches);
+            this.spotlightBar?.updateMatches(currentMatches, this.session.getIndex());
           } else {
-            this.highlighter.clearVisualHighlight();
-            this.session.cancelPendingDrawerGuidance();
+            // User is at root: update session and only guide if match changed
+            const prevCurrent = this.session.getCurrent();
+            this.session.setSession(requestedQuery, currentMatches);
+            this.spotlightBar?.updateMatches(currentMatches, 0);
+
+            const updatedFirst = this.session.getCurrent();
+            if (updatedFirst && (!prevCurrent || prevCurrent.id !== updatedFirst.id)) {
+              void this.session.guideMatch(updatedFirst);
+            } else if (!updatedFirst) {
+              this.highlighter.clearVisualHighlight();
+              this.session.cancelPendingDrawerGuidance();
+            }
           }
 
           return {

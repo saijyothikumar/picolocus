@@ -446,6 +446,12 @@ export class SpotlightBar {
       }
       if (e.key === 'Enter') {
         e.preventDefault();
+        if (this.debounceTimer) {
+          clearTimeout(this.debounceTimer);
+          this.debounceTimer = null;
+          this.callbacks.onQueryChange(this.inputEl.value);
+          return;
+        }
         if (e.shiftKey) {
           this.callbacks.onPrev();
         } else {

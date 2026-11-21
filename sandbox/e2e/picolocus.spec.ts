@@ -69,11 +69,10 @@ test.describe('Picolocus (@picolocus) Microsoft Edge E2E Suite', () => {
     const smiInput = page.locator('input.silent-mi-input');
     await smiInput.click();
     await smiInput.fill('View Invoice');
-    await page.waitForTimeout(200); // Allow 160ms debounce to settle
 
-    // Count badge should indicate multiple matches
+    // Count badge should indicate multiple matches (auto-retrying past 160ms debounce)
     const countBadge = page.locator('span.silent-mi-count');
-    await expect(countBadge).not.toHaveText('0', { timeout: 3000 });
+    await expect(countBadge).not.toHaveText('0', { timeout: 4000 });
 
     // First button #btn-tx-900 should be highlighted
     const btn900 = page.locator('#btn-tx-900');

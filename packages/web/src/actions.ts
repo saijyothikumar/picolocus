@@ -78,6 +78,17 @@ export class MatchStepSession {
     this.currentIndex = 0;
   }
 
+  updateMatchesPreservingCurrent(newMatches: SearchMatch[]): void {
+    const current = this.getCurrent();
+    this.matches = newMatches;
+    if (current) {
+      const nextIdx = newMatches.findIndex((m) => m.id === current.id);
+      this.currentIndex = nextIdx >= 0 ? nextIdx : Math.min(this.currentIndex, Math.max(0, newMatches.length - 1));
+    } else {
+      this.currentIndex = 0;
+    }
+  }
+
   getCurrent(): SearchMatch | null {
     if (this.matches.length === 0) return null;
     return this.matches[this.currentIndex] || null;

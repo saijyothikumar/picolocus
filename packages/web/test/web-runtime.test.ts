@@ -519,4 +519,112 @@ describe('v1.0.0 Focused Opt-In Web Runtime Capabilities', () => {
     outsideDiv.remove();
     session.destroy();
   });
+
+  it('preserves active stepper session index and highlight when background MutationObserver fires', async () => {
+    container.innerHTML = `
+      <button id="btn-a" data-mi-label="Action Alpha">Alpha</button>
+      <button id="btn-b" data-mi-label="Action Beta">Beta</button>
+      <button id="btn-c" data-mi-label="Action Gamma">Gamma</button>
+    `;
+
+    const client = (await createSilentMI({ autoHarvestDom: true })) as any;
+    await client.query('Action');
+
+    expect(client.session.getTotal()).toBe(3);
+    expect(client.session.getIndex()).toBe(0);
+
+    // Step to index 1 (Beta) and index 2 (Gamma)
+    client.handleNext();
+    client.handleNext();
+    expect(client.session.getIndex()).toBe(2);
+    const gammaBtn = container.querySelector('#btn-c');
+    expect(gammaBtn?.getAttribute('data-silent-mi-active')).toBe('true');
+
+    // Trigger external DOM mutation (style or class change on container)
+    container.setAttribute('class', 'updated-host-class');
+
+    // Wait past 250ms debounce
+    await new Promise((r) => setTimeout(r, 320));
+
+    // Invariant: Session index remains persistent at 2, highlight remains on Gamma
+    expect(client.session.getIndex()).toBe(2);
+    expect(gammaBtn?.getAttribute('data-silent-mi-active')).toBe('true');
+
+    client.destroy();
+  });
+
+  it('preserves user stepper index when Stage 2 semantic embedder resolves after user navigated', async () => {
+    container.innerHTML = `
+      <button id="btn-x" data-mi-label="Export PDF">PDF</button>
+      <button id="btn-y" data-mi-label="Export CSV">CSV</button>
+      <button id="btn-z" data-mi-label="Export XML">XML</button>
+    `;
+
+    let resolveEmbed: (val: Int8Array | null) => void = () => {};
+    const mockEmbedder: any = {
+      isEnabled: true,
+      isReady: true,
+      warmup: vi.fn().mockResolvedValue(undefined),
+      isConsented: () => true,
+      grantConsent: vi.fn().mockResolvedValue(undefined),
+      revokeConsent: vi.fn().mockResolvedValue(undefined),
+      embedQuery: vi.fn().mockImplementation(
+        () =>
+          new Promise((resolve) => {
+            resolveEmbed = resolve;
+          })
+      ),
+      embedBatch: vi.fn().mockResolvedValue([new Int8Array(384)]),
+      dispose: vi.fn(),
+    };
+
+    const client = (await createSilentMI({ autoHarvestDom: true, embedder: mockEmbedder })) as any;
+
+    // Start query (Stage 1 runs instantly, Stage 2 is waiting on resolveEmbed)
+    const queryPromise = client.query('Export');
+
+    // Verify Stage 1 set initial results
+    expect(client.session.getTotal()).toBe(3);
+    expect(client.session.getIndex()).toBe(0);
+
+    // User navigates to index 1 while worker is computing
+    client.handleNext();
+    expect(client.session.getIndex()).toBe(1);
+
+    // Now Stage 2 embedding worker finishes
+    resolveEmbed(new Int8Array(384));
+    await queryPromise;
+
+    // Invariant: User index remains preserved at 1 (not clobbered back to 0)
+    expect(client.session.getIndex()).toBe(1);
+
+    client.destroy();
+  });
+
+  it('flushes input debounce immediately when user presses Enter', () => {
+    const highlighter = new VisualHighlighter();
+    const session = new MatchStepSession(highlighter);
+    const onQueryChange = vi.fn();
+    const spotlight = new SpotlightBar(session, {
+      onQueryChange,
+      onNext: vi.fn(),
+      onPrev: vi.fn(),
+      onClose: vi.fn(),
+    });
+
+    const input = (spotlight as any).inputEl as HTMLInputElement;
+    input.value = 'Immediate Query';
+    input.dispatchEvent(new Event('input'));
+
+    expect(onQueryChange).not.toHaveBeenCalled();
+
+    // User hits Enter immediately before 160ms timer
+    input.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+
+    // Invariant: Query is flushed synchronously without waiting for debounce timer
+    expect(onQueryChange).toHaveBeenCalledWith('Immediate Query');
+
+    spotlight.destroy();
+    session.destroy();
+  });
 });
