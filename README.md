@@ -5,7 +5,7 @@
 <h1 align="center">Picolocus (<code>@picolocus/*</code>)</h1>
 
 <p align="center">
-  <strong>Client-Side Micro-Intelligence SDK (v1.0.3)</strong><br />
+  <strong>Client-Side Micro-Intelligence SDK (v1.0.4)</strong><br />
   <em>Show, Don't Chat — Guide, Don't Click.</em>
 </p>
 

@@ -1,50 +1,48 @@
 {
-    "name":  "@picolocus/core",
-    "version":  "1.0.3",
-    "description":  "Zero-dependency hybrid engine, negation gate, Int8 quantization, and generalized RBAC for @picolocus",
-    "author": "Sai Jyothi Kumar <saikumarjyo14@gmail.com>",
-    "homepage": "https://github.com/saijyothikumar/picolocus/tree/main/packages/core#readme",
-    "bugs": {
-        "url": "https://github.com/saijyothikumar/picolocus/issues"
-    },
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/saijyothikumar/picolocus.git",
-        "directory": "packages/core"
-    },
-    "keywords": [
-        "picolocus",
-        "search-engine",
-        "int8-cosine",
-        "negation-gate",
-        "playbooks",
-        "hybrid-search"
-    ],
-    "license":  "Apache-2.0",
-    "publishConfig": {
-        "access": "public"
-    },
-    "type":  "module",
-    "main":  "./dist/index.js",
-    "module":  "./dist/index.js",
-    "types":  "./dist/index.d.ts",
-    "exports":  {
-                    ".":  {
-                              "types":  "./dist/index.d.ts",
-                              "import":  "./dist/index.js",
-                              "default":  "./dist/index.js"
-                          }
-                },
-    "files":  [
-                  "dist"
-              ],
-    "scripts":  {
-                    "build":  "tsc -b"
-                },
-    "dependencies":  {
-
-                     },
-    "devDependencies":  {
-                            "typescript":  "^5.7.2"
-                        }
+  "name": "@picolocus/core",
+  "version": "1.0.4",
+  "description": "Zero-dependency hybrid engine, negation gate, Int8 quantization, and generalized RBAC for @picolocus",
+  "author": "Sai Jyothi Kumar <saikumarjyo14@gmail.com>",
+  "homepage": "https://github.com/saijyothikumar/picolocus/tree/main/packages/core#readme",
+  "bugs": {
+    "url": "https://github.com/saijyothikumar/picolocus/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/saijyothikumar/picolocus.git",
+    "directory": "packages/core"
+  },
+  "keywords": [
+    "picolocus",
+    "search-engine",
+    "int8-cosine",
+    "negation-gate",
+    "playbooks",
+    "hybrid-search"
+  ],
+  "license": "Apache-2.0",
+  "publishConfig": {
+    "access": "public"
+  },
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -b"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "typescript": "^5.7.2"
+  }
 }

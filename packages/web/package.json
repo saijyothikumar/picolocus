@@ -1,6 +1,6 @@
 {
   "name": "@picolocus/web",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Zero-dependency pure CSS highlighter, DOM indexer, and non-modal docked locator bar for @picolocus",
   "author": "Sai Jyothi Kumar <saikumarjyo14@gmail.com>",
   "homepage": "https://github.com/saijyothikumar/picolocus/tree/main/packages/web#readme",
@@ -43,10 +43,10 @@
     "build": "vite build --config vite.sdk.config.ts && tsc -b --force"
   },
   "dependencies": {
-    "@picolocus/core": "^1.0.3"
+    "@picolocus/core": "^1.0.4"
   },
   "devDependencies": {
-    "@picolocus/core": "^1.0.3",
+    "@picolocus/core": "^1.0.4",
     "typescript": "^5.7.2",
     "vite": "^6.4.6"
   }

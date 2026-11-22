@@ -6,7 +6,7 @@
 - **Acquire Missing Skills:** When introducing new algorithms, runtimes, or toolchains, search permissive (MIT/Apache-2.0) skill repositories on GitHub/skills.sh and install audited skills into `.agents/skills/`.
 - **Continuously Update Skills:** Whenever real-world benchmarking exposes a limitation, latency bottleneck, or API change in an installed skill, update `.agents/skills/<skill>/` immediately so knowledge compounds.
 
-## 2. Project Architectural Invariants (Picolocus v1.0.3)
+## 2. Project Architectural Invariants (Picolocus v1.0.4)
 
 - **Zero Chat / Zero Autonomous Click:** Never introduce generative text/chat UI or autonomous `.click()` / destructive HTTP mutations into the runtime SDK.
 - **Explicit Business Consent & Zero Fake Vectors:** 0 model downloads, WASM allocations, or network requests prior to explicit opt-in consent (`controller.grantConsent()`). When `.onnx` is absent, run `searchInstant()` only (`0` embeddings; never generate fake string-hash vectors).

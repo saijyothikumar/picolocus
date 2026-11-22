@@ -72,6 +72,8 @@ console.log('  [OK] Updated sandbox/demo-saas/package.json');
 // 4. CLI Banner in bin.ts
 const binPath = resolve(rootDir, 'packages', 'cli', 'src', 'bin.ts');
 let binCode = readFileSync(binPath, 'utf8');
+binCode = binCode.replace(/@picolocus\/cli v\d+\.\d+\.\d+/g, `@picolocus/cli v${targetVersion}`);
+binCode = binCode.replace(/console\.log\('v\d+\.\d+\.\d+'\);/g, `console.log('v${targetVersion}');`);
 binCode = binCode.replace(/picolocus v\d+\.\d+\.\d+/g, `picolocus v${targetVersion}`);
 writeFileSync(binPath, binCode, 'utf8');
 console.log('  [OK] Updated packages/cli/src/bin.ts');

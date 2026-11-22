@@ -222,12 +222,12 @@ async function main(): Promise<void> {
     case '-v':
     case '--version':
     case 'version':
-      console.log('v1.0.3');
+      console.log('v1.0.4');
       break;
 
     default:
       console.log(`
-@picolocus/cli v1.0.3
+@picolocus/cli v1.0.4
 
 Usage: picolocus <command> [options] (aliases: pico, silent-mi)
 
