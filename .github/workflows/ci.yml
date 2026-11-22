@@ -43,6 +43,9 @@ jobs:
       - name: Build SDK packages
         run: npm run build
 
+      - name: Verify package version parity
+        run: npm run verify:versions
+
       - name: Typecheck monorepo
         run: npm run typecheck
 

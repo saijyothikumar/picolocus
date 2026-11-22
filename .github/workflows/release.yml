@@ -48,6 +48,7 @@ jobs:
       - name: Build and verify all packages
         run: |
           npm run build
+          npm run verify:versions
           npm run typecheck
           npm test
           npm run scan
