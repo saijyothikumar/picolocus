@@ -1,5 +1,5 @@
 /**
- * @picolocus/onnx - WebWorker running AutoModel Matryoshka extraction off the UI thread (v1.0.0)
+ * @picolocus/onnx - WebWorker running AutoModel Matryoshka extraction off the UI thread (v1.0.2)
  * Standardized on MongoDB/mdbr-leaf-ir (256-dim Int8 Matryoshka sentence_embedding).
  * Features:
  * - Direct AutoModel/AutoTokenizer loading bypassing mean-pool corruption
@@ -88,8 +88,77 @@ export type WorkerOutResponse =
 let tokenizer: any = null;
 let model: any = null;
 let modelDimensions = 256;
-let modelSha256 = 'none';
+let modelSha256 = 'unverified';
 let activeConfig: OnnxEmbedderConfig = {};
+
+/**
+ * Computes the cryptographic SHA-256 hex digest of a binary buffer.
+ * Uses globalThis.crypto.subtle in modern browser workers and Node.js >= 19.
+ */
+export async function computeBufferSha256(data: ArrayBuffer | Uint8Array): Promise<string> {
+  const bytes = data instanceof Uint8Array ? data : new Uint8Array(data);
+  if (
+    typeof globalThis !== 'undefined' &&
+    globalThis.crypto &&
+    globalThis.crypto.subtle &&
+    typeof globalThis.crypto.subtle.digest === 'function'
+  ) {
+    const hashBuffer = await globalThis.crypto.subtle.digest('SHA-256', bytes as unknown as BufferSource);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
+  }
+  try {
+    const { createHash } = await import('node:crypto');
+    return createHash('sha256').update(bytes).digest('hex');
+  } catch {
+    return 'unverified';
+  }
+}
+
+/**
+ * Timing-safe string comparison to prevent side-channel timing leaks.
+ */
+export function timingSafeEqualStr(a: string, b: string): boolean {
+  if (typeof a !== 'string' || typeof b !== 'string') return false;
+  if (a.length !== b.length) return false;
+  let mismatch = 0;
+  for (let i = 0; i < a.length; i++) {
+    mismatch |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  }
+  return mismatch === 0;
+}
+
+/**
+ * Validates a computed SHA-256 hex digest against an optional expected hash string.
+ * Supports full 64-char hex, 16-char prefix, and formatted '<modelId>-sha256-<hash>' strings.
+ */
+export function verifyModelHash(
+  computedSha256Hex: string,
+  modelId: string,
+  expected?: string
+): { verified: boolean; formatted: string; expectedNormalized?: string } {
+  if (!computedSha256Hex || computedSha256Hex === 'unverified') {
+    return {
+      verified: !expected || expected.trim() === '',
+      formatted: 'unverified',
+    };
+  }
+  const formatted = `${modelId}-sha256-${computedSha256Hex.slice(0, 16)}`;
+  if (!expected || !expected.trim()) {
+    return { verified: true, formatted };
+  }
+  const exp = expected.trim().toLowerCase();
+  const prefix = `${modelId.toLowerCase()}-sha256-`;
+  const expHex = exp.startsWith(prefix) ? exp.slice(prefix.length) : exp;
+  const compHex = computedSha256Hex.toLowerCase();
+
+  const verified =
+    timingSafeEqualStr(compHex, expHex) ||
+    timingSafeEqualStr(compHex.slice(0, expHex.length), expHex) ||
+    timingSafeEqualStr(formatted.toLowerCase(), exp);
+
+  return { verified, formatted, expectedNormalized: expHex };
+}
 
 // Injectable loader override for tests
 let customLoader: ((config: OnnxEmbedderConfig) => Promise<{ tokenizer: any; model: any; sha256?: string }>) | null = null;
@@ -131,10 +200,12 @@ export async function handleWorkerInit(
       const loaded = await customLoader(msg.config);
       tokenizer = loaded.tokenizer;
       model = loaded.model;
-      modelSha256 = loaded.sha256 || `${modelId}-sha256-verified000000`;
+      const loadedSha = loaded.sha256?.trim();
+      const check = verifyModelHash(loadedSha || 'unverified', modelId, msg.config.expectedModelSha256);
+      modelSha256 = loadedSha ? check.formatted : 'unverified';
       modelDimensions = targetDim;
 
-      if (msg.config.expectedModelSha256 && msg.config.expectedModelSha256 !== modelSha256) {
+      if (!check.verified) {
         model = null;
         tokenizer = null;
         post({
@@ -205,10 +276,51 @@ export async function handleWorkerInit(
       }
     }
 
-    modelSha256 = `${modelId}-sha256-verified000000`;
+    // Compute cryptographic SHA-256 of candidate ONNX weight file if accessible
+    let computedHex: string | null = null;
+    const candidates = ['onnx/model_q4.onnx', 'model_q4.onnx', 'onnx/model_quantized.onnx', 'model_quantized.onnx', 'model.onnx'];
+
+    if (msg.config.localModelPath) {
+      const basePath = msg.config.localModelPath.replace(/\/+$/, '');
+      if (typeof fetch === 'function') {
+        for (const cand of candidates) {
+          try {
+            const url = `${basePath}/${cand}`;
+            const res = await fetch(url);
+            if (res.ok) {
+              const buf = await res.arrayBuffer();
+              computedHex = await computeBufferSha256(buf);
+              break;
+            }
+          } catch {
+            // Try next candidate
+          }
+        }
+      }
+
+      if (!computedHex) {
+        try {
+          const { existsSync, readFileSync } = await import('node:fs');
+          const { join } = await import('node:path');
+          for (const cand of candidates) {
+            const p = join(basePath, cand);
+            if (existsSync(p)) {
+              const buf = readFileSync(p);
+              computedHex = await computeBufferSha256(buf);
+              break;
+            }
+          }
+        } catch {
+          // Node fs not available or file not found
+        }
+      }
+    }
+
+    const check = verifyModelHash(computedHex || 'unverified', modelId, msg.config.expectedModelSha256);
+    modelSha256 = computedHex ? check.formatted : 'unverified';
     modelDimensions = targetDim;
 
-    if (msg.config.expectedModelSha256 && msg.config.expectedModelSha256 !== modelSha256) {
+    if (!check.verified) {
       model = null;
       tokenizer = null;
       post({

@@ -9,7 +9,9 @@
 - **Off-Thread Neural Embeddings:** Runs Transformers.js in an isolated WebWorker off the UI thread.
 - **Explicit Business Consent:** 0 network requests, 0 model downloads, and 0 WASM allocations prior to explicit consent.
 - **120s Idle Reaper:** Automatically terminates the Worker after 120s idle (or 15s in background tabs) to reclaim ~60-95 MB of WASM RAM.
-- **Client Memory Profiling:** Native `measureClientMemory` integration to monitor real-time heap usage.
+- **Client Memory Profiling & Telemetry:** Native `measureClientMemory` integration to monitor real-time heap usage; `estimateOnnxRamFootprintMb` provides an empirical baseline (~62 MB for MongoDB/mdbr-leaf-ir q4 WASM).
+- **Cryptographic Model Verification:** Verifies ONNX model weights via real browser `crypto.subtle.digest('SHA-256')` with constant-time equality checks against `expectedModelSha256`.
+- **Zero COOP/COEP Dependency:** Configured for single-threaded WASM (`numThreads: 1`), allowing execution in all browsers without requiring custom cross-origin isolation headers (fully compatible with GitHub Pages).
 
 ## Installation
 

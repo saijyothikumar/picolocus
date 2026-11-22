@@ -1,4 +1,4 @@
-# LLMS.md — Architectural Specification & Machine Guide for AI Agents (Picolocus v1.0.0)
+# LLMS.md — Architectural Specification & Machine Guide for AI Agents (Picolocus v1.0.2)
 
 > Dense, machine-readable reference for AI coding agents, automation harnesses, and LLM code generation.
 > Governed by strict verification gates: every assertion in this document maps directly to active, tested TypeScript code.
@@ -7,7 +7,7 @@
 
 ## 1. Product Thesis & System Invariants
 
-- **Package Identity:** `@picolocus` (v1.0.0), Apache-2.0 License.
+- **Package Identity:** `@picolocus` (v1.0.2), Apache-2.0 License.
 - **Core Philosophy:** *"Show, Don't Chat — Guide, Don't Click."*
   - **Zero Generative Chat / Zero Hallucination:** No conversational bot UI, no cloud LLM API calls, no LLM prose generation. Queries resolve deterministically to UI elements, live table rows, or verbatim policy excerpts in `< 10 ms`.
   - **Zero Autonomous `.click()` or Destructive Mutations:** The SDK never programmatically invokes `.click()` on host elements. Destructive actions (`Delete`, `Revoke`, `Refund`) are highlighted with non-destructive CSS attributes (`[data-pico-active="true"]` / `[data-silent-mi-active="true"]`), guiding the user via visual breadcrumbs while requiring human execution.

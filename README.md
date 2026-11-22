@@ -36,7 +36,7 @@ packages/         # <-- MAIN DISTRIBUTABLE PROJECT (packed via npm run pack:sdk)
   cli/            # @picolocus/cli — Build-time HTML/JSX AST scanner, RBAC verifier, smoke test & query test CLI
 sandbox/          # <-- ISOLATED TESTBED & E2E ONLY ("private": true — NEVER shipped to SDK users)
   demo-saas/      # Interactive test app (panels, inputs, 200-row table, ?onnx= loader & RAM telemetry)
-  e2e/            # Playwright real-browser Microsoft Edge E2E suite
+  e2e/            # Playwright real-browser E2E suite (Chromium in CI / Microsoft Edge local)
 ```
 
 ---
@@ -238,7 +238,7 @@ Automated multi-version verification runs on every push and PR to `main`:
 ### 2. Live Production Demo Hosting
 The interactive sandbox workbench (`sandbox/demo-saas`) is production-ready across multiple cloud hosting targets:
 - **GitHub Pages:** Automatically built and deployed on every push to `main` via [`.github/workflows/deploy-pages.yml`](./.github/workflows/deploy-pages.yml) at `https://saijyothikumar.github.io/picolocus/`.
-- **Vercel:** Pre-configured via [`vercel.json`](./vercel.json) with required `Cross-Origin-Opener-Policy: same-origin` and `Cross-Origin-Embedder-Policy: credentialless` headers for WebAssembly SIMD/threads.
+- **Vercel:** Pre-configured via [`vercel.json`](./vercel.json) with `Cross-Origin-Opener-Policy: same-origin` and `Cross-Origin-Embedder-Policy: credentialless` headers for optional multithreaded WebAssembly workloads (single-threaded WASM runs without COOP/COEP headers across all hosts, including GitHub Pages).
 - **Render:** Pre-configured via [`render.yaml`](./render.yaml) for static site hosting.
 
 ### 3. Publishing & Sharing the SDK

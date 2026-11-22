@@ -1,5 +1,5 @@
 /**
- * @picolocus/core - Micro-Intelligence Search Engine (v1.0.0)
+ * @picolocus/core - Micro-Intelligence Search Engine (v1.0.2)
  * Features:
  * - Load-time pre-indexing with clause-scoped polarity
  * - Declarative JSON harness compilation & domain glossary expansion

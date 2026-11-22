@@ -55,11 +55,14 @@ jobs:
       - name: Verify zero RBAC leaks
         run: npm run verify
 
+      - name: Download model weights for tests
+        run: node scripts/download-model.mjs
+
       - name: Evaluate golden test queries
-        run: npm run test:queries
+        run: npm run test:queries -- --require-onnx
 
       - name: Golden model & RAM smoke gate
-        run: npm run smoke:model
+        run: npm run smoke:model -- --require-onnx
 
       - name: Build demo SaaS distribution
         run: npm run build:demo

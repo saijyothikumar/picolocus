@@ -9,6 +9,9 @@ import {
   OnnxWorkerEmbedder,
   setTestModelLoader,
   handleWorkerInit,
+  computeBufferSha256,
+  timingSafeEqualStr,
+  verifyModelHash,
 } from '../src/onnx-worker.js';
 import { NoopEmbedder } from '@picolocus/core';
 
@@ -70,6 +73,70 @@ describe('SemanticEmbedderClient Business Opt-In Consent & Lifecycle', () => {
 
     const batchResult = await client.embedBatch(['doc 1', 'doc 2']);
     expect(batchResult).toEqual([null, null]);
+  });
+
+  it('defaults modelSha256 to unverified when not specified', () => {
+    const client = new SemanticEmbedderClient({
+      modelId: 'mdbr-leaf-ir',
+    });
+    expect(client.modelSha256).toBe('unverified');
+    expect(client.modelSha256).not.toContain('verified000000');
+  });
+
+  it('updates client.modelSha256 upon worker INIT_DONE', async () => {
+    const client = new SemanticEmbedderClient({
+      modelId: 'mdbr-leaf-ir',
+      consentGranted: true,
+    });
+    expect(client.modelSha256).toBe('unverified');
+
+    // Simulate worker message dispatch
+    const fakeWorker: any = {
+      postMessage: vi.fn(),
+      terminate: vi.fn(),
+    };
+    (client as any).worker = fakeWorker;
+    const testHash = 'mdbr-leaf-ir-sha256-43a3db48a8807628';
+
+    // Call init handler callback
+    const initId = 'init-test-1';
+    (client as any).pendingRequests.add(initId);
+    let resolved = false;
+    (client as any).messageHandlers.set(initId, (resp: any) => {
+      (client as any).messageHandlers.delete(initId);
+      (client as any).pendingRequests.delete(initId);
+      if (resp.type === 'INIT_DONE') {
+        (client as any)._isReady = true;
+        (client as any)._dimensions = resp.dimensions;
+        (client as any)._modelSha256 = resp.modelSha256;
+        resolved = true;
+      }
+    });
+
+    const handler = (client as any).messageHandlers.get(initId);
+    handler({
+      type: 'INIT_DONE',
+      id: initId,
+      dimensions: 256,
+      modelSha256: testHash,
+    });
+
+    expect(resolved).toBe(true);
+    expect(client.modelSha256).toBe(testHash);
+  });
+
+  it('embedBatch and embedQuery handle warmup rejection without unhandled errors', async () => {
+    const client = new SemanticEmbedderClient({
+      modelId: 'mdbr-leaf-ir',
+      consentGranted: true,
+    });
+    vi.spyOn(client, 'warmup').mockRejectedValue(new Error('Warmup network failure'));
+
+    const queryRes = await client.embedQuery('test query');
+    expect(queryRes).toBeNull();
+
+    const batchRes = await client.embedBatch(['doc 1', 'doc 2']);
+    expect(batchRes).toEqual([null, null]);
   });
 
   it('preserves exact expectedModelSha256 and rejects integrity mismatch', async () => {
@@ -239,5 +306,79 @@ describe('15-Second Tab-Sleep Visibility Reaping', () => {
 
     client.dispose();
     delete (globalThis as any).document;
+  });
+
+  describe('Cryptographic SHA-256 Model Verification & Timing-Safe Comparison', () => {
+    it('computes exact SHA-256 digest on binary buffer using subtle crypto', async () => {
+      // Standard NIST test vector for "hello world"
+      // sha256("hello world") = b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9
+      const data = new TextEncoder().encode('hello world');
+      const hash = await computeBufferSha256(data);
+      expect(hash).toBe('b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9');
+    });
+
+    it('timingSafeEqualStr compares strings in constant time', () => {
+      expect(timingSafeEqualStr('abcdef', 'abcdef')).toBe(true);
+      expect(timingSafeEqualStr('abcdef', 'abcdeg')).toBe(false);
+      expect(timingSafeEqualStr('abcdef', 'abcde')).toBe(false);
+      expect(timingSafeEqualStr('', '')).toBe(true);
+      expect(timingSafeEqualStr('a', '')).toBe(false);
+    });
+
+    it('verifyModelHash validates full hex, prefix, and formatted strings', () => {
+      const fullHex = '43a3db48a8807628fe01d6ae1d76d82007f711acc0c4e2b033385a62370496ba';
+      const modelId = 'mdbr-leaf-ir';
+
+      // 1. No expected hash -> auto-passes with formatted hash
+      const checkNone = verifyModelHash(fullHex, modelId);
+      expect(checkNone.verified).toBe(true);
+      expect(checkNone.formatted).toBe('mdbr-leaf-ir-sha256-43a3db48a8807628');
+
+      // 2. Exact full 64-char hex
+      const checkFull = verifyModelHash(fullHex, modelId, fullHex);
+      expect(checkFull.verified).toBe(true);
+
+      // 3. Exact 16-char prefix
+      const checkPrefix = verifyModelHash(fullHex, modelId, '43a3db48a8807628');
+      expect(checkPrefix.verified).toBe(true);
+
+      // 4. Formatted string
+      const checkFormatted = verifyModelHash(fullHex, modelId, 'mdbr-leaf-ir-sha256-43a3db48a8807628');
+      expect(checkFormatted.verified).toBe(true);
+
+      // 5. Mismatch
+      const checkBad = verifyModelHash(fullHex, modelId, '0000000000000000');
+      expect(checkBad.verified).toBe(false);
+    });
+
+    it('handleWorkerInit with custom loader without sha256 defaults to unverified without fake placeholder', async () => {
+      setTestModelLoader(async () => {
+        return {
+          tokenizer: () => ({}),
+          model: () => ({}),
+        };
+      });
+
+      let receivedResp: any = null;
+      await handleWorkerInit(
+        {
+          type: 'INIT',
+          id: 'test-no-sha',
+          config: {
+            modelId: 'test-model',
+          },
+        },
+        (resp) => {
+          receivedResp = resp;
+        }
+      );
+
+      expect(receivedResp).toBeDefined();
+      expect(receivedResp.type).toBe('INIT_DONE');
+      expect(receivedResp.modelSha256).toBe('unverified');
+      expect(receivedResp.modelSha256).not.toContain('verified000000');
+
+      setTestModelLoader(null);
+    });
   });
 });

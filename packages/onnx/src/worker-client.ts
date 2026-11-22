@@ -1,5 +1,5 @@
 /**
- * @picolocus/onnx - Client-side worker controller, opt-in consent & tab-sleep RAM reaper (v1.0.0)
+ * @picolocus/onnx - Client-side worker controller, opt-in consent & tab-sleep RAM reaper (v1.0.2)
  * Invariants:
  * - consentMode defaults strictly to 'opt-in' (0 WASM RAM, 0 network bytes prior to consent).
  * - reapIdleWorker terminates Worker after 120s idle or 15s after document.visibilityState === 'hidden'.
@@ -17,7 +17,7 @@ export const DEFAULT_HIDDEN_REAP_DELAY_MS = 15000; // 15 seconds
 
 export class SemanticEmbedderClient implements EmbedderPlugin {
   readonly id: string;
-  readonly modelSha256: string;
+  private _modelSha256: string = 'unverified';
   private config: OnnxEmbedderConfig;
   private worker: Worker | null = null;
   private queue = new LatestOnlyQueue<Int8Array | null>();
@@ -43,7 +43,7 @@ export class SemanticEmbedderClient implements EmbedderPlugin {
     const rawId = config.modelId || config.onnxModelId || 'mdbr-leaf-ir';
     this.id = rawId;
     this.config = config;
-    this.modelSha256 = config.expectedModelSha256?.trim() || `${rawId}-sha256-verified000000`;
+    this._modelSha256 = config.expectedModelSha256?.trim() || 'unverified';
     this.idleTimeoutMs = config.idleTimeoutMs ?? DEFAULT_IDLE_TIMEOUT_MS;
     this.hiddenReapDelayMs = config.hiddenReapDelayMs ?? DEFAULT_HIDDEN_REAP_DELAY_MS;
     this._dimensions = config.dimensions ?? 256;
@@ -65,6 +65,10 @@ export class SemanticEmbedderClient implements EmbedderPlugin {
 
   get dimensions(): number {
     return this._dimensions;
+  }
+
+  get modelSha256(): string {
+    return this._modelSha256;
   }
 
   isConsented(): boolean {
@@ -149,6 +153,7 @@ export class SemanticEmbedderClient implements EmbedderPlugin {
           if (resp.type === 'INIT_DONE') {
             this._isReady = true;
             this._dimensions = resp.dimensions;
+            this._modelSha256 = resp.modelSha256;
             this.resetIdleTimer();
             resolve();
           } else if (resp.type === 'INIT_ERROR') {
@@ -187,7 +192,11 @@ export class SemanticEmbedderClient implements EmbedderPlugin {
 
     return this.queue.enqueue(async () => {
       if (!this._isReady || !this.worker) {
-        await this.warmup();
+        try {
+          await this.warmup();
+        } catch {
+          return null;
+        }
       }
       return this.executeEmbedQuery(text, role);
     });
@@ -201,7 +210,11 @@ export class SemanticEmbedderClient implements EmbedderPlugin {
     if (this._disposed || !this.isEnabled) return null;
     this.resetIdleTimer();
     if (!this._isReady || !this.worker) {
-      await this.warmup();
+      try {
+        await this.warmup();
+      } catch {
+        return null;
+      }
     }
     return this.executeEmbedQuery(text, role);
   }
@@ -242,7 +255,11 @@ export class SemanticEmbedderClient implements EmbedderPlugin {
     this.resetIdleTimer();
 
     if (!this._isReady || !this.worker) {
-      await this.warmup();
+      try {
+        await this.warmup();
+      } catch {
+        return texts.map(() => null);
+      }
     }
 
     return new Promise((resolve, reject) => {
@@ -314,7 +331,7 @@ export class SemanticEmbedderClient implements EmbedderPlugin {
     if (typeof window !== 'undefined' && typeof window.addEventListener === 'function') {
       this.pagehideListener = (e: any) => {
         if (!e || !e.persisted) {
-          this.reapIdleWorker('pagehide');
+          this.reapWhenIdle('pagehide');
         }
       };
       window.addEventListener('pagehide', this.pagehideListener);

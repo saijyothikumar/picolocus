@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-test.describe('Picolocus (@picolocus) Microsoft Edge E2E Suite', () => {
+test.describe('Picolocus (@picolocus) Real-Browser E2E Suite', () => {
 
   test('Scenario 1: Uninterrupted typing focus on host text inputs', async ({ page }) => {
     await page.goto('/#/general');
@@ -478,6 +478,18 @@ test.describe('Picolocus (@picolocus) Microsoft Edge E2E Suite', () => {
     // Verify page did NOT reload
     const preservedFlag = await page.evaluate(() => (window as unknown as { __e2eDidNotReload: boolean }).__e2eDidNotReload);
     expect(preservedFlag).toBe(true);
+  });
+
+  test('Scenario 18: Client ONNX Embedder activation and RAM telemetry', async ({ page }) => {
+    // Navigate with ?onnx=true&consent=eager to activate ONNX embedder in demo workbench
+    await page.goto('/?onnx=true&consent=eager#/general');
+
+    const consentStatus = page.locator('#consent-status');
+    await expect(consentStatus).toContainText('AI: Consented', { timeout: 10000 });
+
+    const ramBadge = page.locator('#ram-telemetry');
+    await expect(ramBadge).toBeVisible();
+    await expect(ramBadge).toContainText('ONNX', { timeout: 10000 });
   });
 
 });

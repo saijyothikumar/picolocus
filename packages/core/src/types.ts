@@ -1,5 +1,5 @@
 /**
- * @picolocus/core - Domain-agnostic contracts and types (v1.0.0)
+ * @picolocus/core - Domain-agnostic contracts and types (v1.0.2)
  * Follows the core product thesis: "Show, Don't Chat - Guide, Don't Click"
  */
 

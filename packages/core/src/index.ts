@@ -1,5 +1,5 @@
 /**
- * @picolocus/core - Client-Side Micro-Intelligence Core SDK (v1.0.0)
+ * @picolocus/core - Client-Side Micro-Intelligence Core SDK (v1.0.2)
  * License: Apache-2.0
  */
 

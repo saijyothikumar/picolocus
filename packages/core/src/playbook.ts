@@ -1,5 +1,5 @@
 /**
- * @picolocus/core - Declarative Playbook Compiler & Branch Evaluator (v1.0.0)
+ * @picolocus/core - Declarative Playbook Compiler & Branch Evaluator (v1.0.2)
  * Evaluates stateful UI conditional navigation in <0.02 ms with zero eval.
  */
 
