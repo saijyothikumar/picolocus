@@ -22,7 +22,7 @@ npm install @picolocus/core
 ## Quick Start
 
 ```typescript
-import { SilentMIEngine, PicolocusEngine } from '@picolocus/core';
+import { PicolocusEngine } from '@picolocus/core';
 
 const engine = new PicolocusEngine({
   calibration: {

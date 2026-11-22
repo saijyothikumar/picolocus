@@ -176,6 +176,84 @@ describe('SemanticEmbedderClient Business Opt-In Consent & Lifecycle', () => {
 
     setTestModelLoader(null);
   });
+});
+
+describe('Cryptographic SHA-256 Model Integrity Verification', () => {
+  it('computes exact SHA-256 for empty buffer (NIST test vector)', async () => {
+    const emptyBuf = new Uint8Array(0);
+    const hash = await computeBufferSha256(emptyBuf);
+    expect(hash).toBe('e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855');
+  });
+
+  it('computes exact SHA-256 for known test string buffer', async () => {
+    const textBytes = new TextEncoder().encode('hello world');
+    const hash = await computeBufferSha256(textBytes);
+    expect(hash).toBe('b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9');
+  });
+
+  it('performs constant-time string comparisons correctly with timingSafeEqualStr', () => {
+    expect(timingSafeEqualStr('abcdef', 'abcdef')).toBe(true);
+    expect(timingSafeEqualStr('abcdef', 'abcdeg')).toBe(false);
+    expect(timingSafeEqualStr('abcdef', 'abcde')).toBe(false);
+    expect(timingSafeEqualStr('', '')).toBe(true);
+    expect(timingSafeEqualStr(null as any, 'abc')).toBe(false);
+  });
+
+  it('verifies model hashes and formats full 64-char SHA-256 digests', () => {
+    const knownHash = 'b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9';
+    const modelId = 'mdbr-leaf-ir';
+
+    // Verification without expected hash returns full formatted digest
+    const checkNoExpected = verifyModelHash(knownHash, modelId);
+    expect(checkNoExpected.verified).toBe(true);
+    expect(checkNoExpected.formatted).toBe(`mdbr-leaf-ir-sha256-${knownHash}`);
+
+    // Verification with matching full 64-char hex
+    const checkFullHex = verifyModelHash(knownHash, modelId, knownHash);
+    expect(checkFullHex.verified).toBe(true);
+
+    // Verification with matching formatted string
+    const checkFormatted = verifyModelHash(knownHash, modelId, `mdbr-leaf-ir-sha256-${knownHash}`);
+    expect(checkFormatted.verified).toBe(true);
+
+    // Verification with 16-char prefix
+    const checkPrefix = verifyModelHash(knownHash, modelId, knownHash.slice(0, 16));
+    expect(checkPrefix.verified).toBe(true);
+
+    // Verification with mismatching hash fails
+    const checkMismatch = verifyModelHash(knownHash, modelId, '0000000000000000000000000000000000000000000000000000000000000000');
+    expect(checkMismatch.verified).toBe(false);
+  });
+
+  it('handleWorkerInit skips extra network fetch when expectedModelSha256 is omitted', async () => {
+    setTestModelLoader(async () => {
+      return {
+        tokenizer: () => ({}),
+        model: () => ({}),
+        sha256: undefined,
+      };
+    });
+
+    let receivedResp: any = null;
+    await handleWorkerInit(
+      {
+        type: 'INIT',
+        id: 'test-init-no-hash',
+        config: {
+          modelId: 'mdbr-leaf-ir',
+        },
+      },
+      (resp) => {
+        receivedResp = resp;
+      }
+    );
+
+    expect(receivedResp).toBeDefined();
+    expect(receivedResp.type).toBe('INIT_DONE');
+    expect(receivedResp.modelSha256).toBe('unverified');
+
+    setTestModelLoader(null);
+  });
 
   it('reapIdleWorker terminates worker and resets RAM footprint while keeping optedIn: true', () => {
     const client = new SemanticEmbedderClient({
@@ -329,10 +407,10 @@ describe('15-Second Tab-Sleep Visibility Reaping', () => {
       const fullHex = '43a3db48a8807628fe01d6ae1d76d82007f711acc0c4e2b033385a62370496ba';
       const modelId = 'mdbr-leaf-ir';
 
-      // 1. No expected hash -> auto-passes with formatted hash
+      // 1. No expected hash -> auto-passes with formatted full 64-char hex hash
       const checkNone = verifyModelHash(fullHex, modelId);
       expect(checkNone.verified).toBe(true);
-      expect(checkNone.formatted).toBe('mdbr-leaf-ir-sha256-43a3db48a8807628');
+      expect(checkNone.formatted).toBe(`mdbr-leaf-ir-sha256-${fullHex}`);
 
       // 2. Exact full 64-char hex
       const checkFull = verifyModelHash(fullHex, modelId, fullHex);
@@ -342,9 +420,11 @@ describe('15-Second Tab-Sleep Visibility Reaping', () => {
       const checkPrefix = verifyModelHash(fullHex, modelId, '43a3db48a8807628');
       expect(checkPrefix.verified).toBe(true);
 
-      // 4. Formatted string
-      const checkFormatted = verifyModelHash(fullHex, modelId, 'mdbr-leaf-ir-sha256-43a3db48a8807628');
-      expect(checkFormatted.verified).toBe(true);
+      // 4. Formatted string (prefix and full)
+      const checkFormattedPrefix = verifyModelHash(fullHex, modelId, 'mdbr-leaf-ir-sha256-43a3db48a8807628');
+      expect(checkFormattedPrefix.verified).toBe(true);
+      const checkFormattedFull = verifyModelHash(fullHex, modelId, `mdbr-leaf-ir-sha256-${fullHex}`);
+      expect(checkFormattedFull.verified).toBe(true);
 
       // 5. Mismatch
       const checkBad = verifyModelHash(fullHex, modelId, '0000000000000000');

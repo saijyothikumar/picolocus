@@ -8,5 +8,6 @@ export * from './embedder.js';
 export * from './habit-memory.js';
 export * from './negation.js';
 export * from './playbook.js';
+export * from './hash.js';
 export * from './engine.js';
 export { SilentMIEngine as PicolocusEngine } from './engine.js';

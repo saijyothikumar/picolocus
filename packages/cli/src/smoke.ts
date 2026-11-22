@@ -16,6 +16,7 @@ export interface SmokeOptions {
   maxRssMb?: number;
   maxLatencyMs?: number;
   requireOnnx?: boolean;
+  tierOrder?: string[];
 }
 
 export interface GoldenCase {
@@ -97,10 +98,11 @@ export class SmokeRunner {
       }
     }
 
+    const tierOrder = options.tierOrder || ['default'];
     const engine = new SilentMIEngine({
       minConfidence: 0.29,
       oodSemanticFloor: 0.44,
-      tierOrder: ['free', 'pro', 'enterprise'],
+      tierOrder,
     });
     engine.setItems(allItems);
 
@@ -114,7 +116,7 @@ export class SmokeRunner {
         }
       }
     } else {
-      goldens = this.synthesizeGoldens(allItems);
+      goldens = this.synthesizeGoldens(allItems, tierOrder);
     }
 
     console.log(`[+] Executing ${goldens.length} golden test cases...`);
@@ -207,7 +209,7 @@ export class SmokeRunner {
     return { passed: true, message: 'Smoke test passed' };
   }
 
-  static synthesizeGoldens(items: ManifestItem[]): GoldenCase[] {
+  static synthesizeGoldens(items: ManifestItem[], tierOrder: string[] = ['default']): GoldenCase[] {
     const goldens: GoldenCase[] = [];
 
     // 1. Positive cases (prefer controls with concise UI labels)
@@ -244,11 +246,12 @@ export class SmokeRunner {
     // 4. Upsell cases
     const upsellSample = items.find((i) => i.tierPolicy === 'upsell');
     if (upsellSample) {
+      const lowerTier = tierOrder[0] || 'unprivileged';
       goldens.push({
         query: upsellSample.label,
         expectedId: upsellSample.id,
         expectTierLocked: true,
-        user: { tier: 'free' },
+        user: { tier: lowerTier },
         category: 'upsell',
       });
     }
@@ -262,7 +265,7 @@ export class SmokeRunner {
       goldens.push({
         query: rbacSample.label,
         notExpectedId: rbacSample.id,
-        user: { role: 'viewer' },
+        user: { role: 'unauthorized_role' },
         category: 'rbac',
       });
       // User with required role can access

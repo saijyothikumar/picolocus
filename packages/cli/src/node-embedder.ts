@@ -177,16 +177,6 @@ export class NodeEmbedder {
           sliced[d] = data[offset + d] ?? 0;
         }
 
-        // L2 normalize
-        let norm = 0;
-        for (let d = 0; d < this.dimensions; d++) {
-          norm += (sliced[d] ?? 0) * (sliced[d] ?? 0);
-        }
-        norm = Math.sqrt(norm) || 1e-12;
-        for (let d = 0; d < this.dimensions; d++) {
-          sliced[d] = (sliced[d] ?? 0) / norm;
-        }
-
         const { int8, scale } = quantizeFloatToInt8(sliced);
         vectors.push(int8);
         quantScales.push(scale);
@@ -215,15 +205,8 @@ export class NodeEmbedder {
         }
 
         const divisor = maskSum > 0 ? maskSum : 1;
-        let norm = 0;
         for (let d = 0; d < this.dimensions; d++) {
           pooled[d] = (pooled[d] ?? 0) / divisor;
-          norm += (pooled[d] ?? 0) * (pooled[d] ?? 0);
-        }
-
-        norm = Math.sqrt(norm) || 1e-12;
-        for (let d = 0; d < this.dimensions; d++) {
-          pooled[d] = (pooled[d] ?? 0) / norm;
         }
 
         const { int8, scale } = quantizeFloatToInt8(pooled);

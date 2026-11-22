@@ -143,7 +143,8 @@ export function verifyModelHash(
       formatted: 'unverified',
     };
   }
-  const formatted = `${modelId}-sha256-${computedSha256Hex.slice(0, 16)}`;
+  // Expose full 64-character SHA-256 hex digest
+  const formatted = `${modelId}-sha256-${computedSha256Hex}`;
   if (!expected || !expected.trim()) {
     return { verified: true, formatted };
   }
@@ -276,12 +277,11 @@ export async function handleWorkerInit(
       }
     }
 
-    // Compute cryptographic SHA-256 of candidate ONNX weight file if accessible
+    // Only fetch candidate weights to compute cryptographic SHA-256 if expectedModelSha256 was explicitly requested
     let computedHex: string | null = null;
-    const candidates = ['onnx/model_q4.onnx', 'model_q4.onnx', 'onnx/model_quantized.onnx', 'model_quantized.onnx', 'model.onnx'];
-
-    if (msg.config.localModelPath) {
+    if (msg.config.expectedModelSha256 && msg.config.localModelPath) {
       const basePath = msg.config.localModelPath.replace(/\/+$/, '');
+      const candidates = ['onnx/model_q4.onnx', 'model_q4.onnx', 'onnx/model_quantized.onnx', 'model_quantized.onnx', 'model.onnx'];
       if (typeof fetch === 'function') {
         for (const cand of candidates) {
           try {

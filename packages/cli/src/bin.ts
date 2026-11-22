@@ -21,6 +21,11 @@ interface CliConfig {
   modelId?: string;
   harnessPath?: string;
   queriesPath?: string;
+  tiers?: {
+    order?: string[];
+    defaultPolicy?: string;
+  };
+  roles?: string[];
 }
 
 function parseArgs(args: string[]): { command: string; flags: Record<string, string | boolean> } {
@@ -163,6 +168,7 @@ async function main(): Promise<void> {
         maxRssMb,
         maxLatencyMs,
         requireOnnx,
+        tierOrder: config.tiers?.order,
       });
 
       if (!res.passed) {
@@ -185,6 +191,7 @@ async function main(): Promise<void> {
         modelsDir,
         modelId,
         requireOnnx,
+        tierOrder: config.tiers?.order,
       });
 
       if (!res.passed) {

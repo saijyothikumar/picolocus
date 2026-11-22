@@ -26,6 +26,7 @@ export interface TestQueriesOptions {
   modelsDir?: string;
   modelId?: string;
   requireOnnx?: boolean;
+  tierOrder?: string[];
 }
 
 export class TestQueriesRunner {
@@ -88,10 +89,11 @@ export class TestQueriesRunner {
       (f) => f.startsWith('manifest.') && f.endsWith('.json')
     );
 
+    const tierOrder = options.tierOrder || ['default'];
     const engine = new SilentMIEngine({
       minConfidence: 0.29,
       oodSemanticFloor: 0.44,
-      tierOrder: ['free', 'pro', 'enterprise'],
+      tierOrder,
     });
 
     for (const f of manifestFiles) {

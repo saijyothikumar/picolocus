@@ -14,7 +14,7 @@
  * - Debounced MutationObserver (250 ms) ignoring [data-smi-ui] self-mutations
  */
 
-import { ActionKind, EmbedderPlugin, ManifestItem, TargetType, TierPolicy } from '@picolocus/core';
+import { ActionKind, EmbedderPlugin, ManifestItem, TargetType, TierPolicy, fnv1a32 } from '@picolocus/core';
 
 export interface AncestorAuthMetadata {
   ignored: boolean;
@@ -28,15 +28,7 @@ export interface DomRowIndexerOptions {
   untrustedSelector?: string;
 }
 
-export function fnv1a32(str: string): number {
-  let hash = 0x811c9dc5;
-  const len = str.length;
-  for (let i = 0; i < len; i++) {
-    hash ^= str.charCodeAt(i);
-    hash = Math.imul(hash, 0x01000193);
-  }
-  return hash >>> 0;
-}
+export { fnv1a32 };
 
 export class DomRowIndexer {
   private parentIgnoreCache = new WeakMap<Element, boolean>();

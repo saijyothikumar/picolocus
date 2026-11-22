@@ -5,19 +5,9 @@
  */
 
 import { parse as parseHtml, HTMLElement as ParsedHTMLElement } from 'node-html-parser';
-import { ManifestItem, TierPolicy } from '@picolocus/core';
+import { ManifestItem, TierPolicy, fnv1a32 } from '@picolocus/core';
 import { readFileSync } from 'node:fs';
 import { ScannedAuthMeta } from './scanner.js';
-
-function fnv1a32(str: string): number {
-  let hash = 0x811c9dc5;
-  const len = str.length;
-  for (let i = 0; i < len; i++) {
-    hash ^= str.charCodeAt(i);
-    hash = Math.imul(hash, 0x01000193);
-  }
-  return hash >>> 0;
-}
 
 export class ProseChunker {
   /**

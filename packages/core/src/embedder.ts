@@ -53,22 +53,14 @@ export class NoopEmbedder implements EmbedderPlugin {
   }
 }
 
+import { fnv1aHash } from './hash.js';
+
 export interface QuantizedInt8Vector {
   int8: Int8Array;
   scale: number;
 }
 
-/**
- * 32-bit FNV-1a hash implementation for non-cryptographic fast fingerprinting.
- */
-export function fnv1aHash(str: string): number {
-  let hash = 0x811c9dc5;
-  for (let i = 0; i < str.length; i++) {
-    hash ^= str.charCodeAt(i);
-    hash = Math.imul(hash, 0x01000193);
-  }
-  return hash >>> 0;
-}
+export { fnv1aHash };
 
 /**
  * L2-normalizes a Float32Array, computes scale as maxAbs / 127,

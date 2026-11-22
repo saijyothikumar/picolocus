@@ -664,8 +664,14 @@ export async function createPicolocus(config: PicolocusConfig = {}): Promise<Pic
   return initPicolocus(config);
 }
 
-// Backward-compatible aliases
+/**
+ * @deprecated Use `initPicolocus` instead. Backward-compatible alias that will be removed in v2.0.0.
+ */
 export const initSilentMI = initPicolocus;
+
+/**
+ * @deprecated Use `createPicolocus` instead. Backward-compatible alias that will be removed in v2.0.0.
+ */
 export const createSilentMI = createPicolocus;
 
 // Automatic initialization for script tags carrying data-pico-auto or data-silent-mi-auto

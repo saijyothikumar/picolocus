@@ -22,38 +22,32 @@
     "zero-dependency"
   ],
   "license": "Apache-2.0",
-  "publishConfig": {
-    "access": "public"
-  },
   "type": "module",
   "main": "./dist/picolocus.esm.js",
   "module": "./dist/picolocus.esm.js",
+  "unpkg": "./dist/picolocus.iife.js",
+  "jsdelivr": "./dist/picolocus.iife.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/picolocus.esm.js",
       "default": "./dist/picolocus.esm.js"
-    }
+    },
+    "./iife": "./dist/picolocus.iife.js"
   },
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "vite build --config vite.sdk.config.ts && tsc -b"
+    "build": "vite build --config vite.sdk.config.ts && tsc -b --force"
   },
-  "dependencies": {},
-  "peerDependencies": {
+  "dependencies": {
     "@picolocus/core": "^1.0.3"
-  },
-  "peerDependenciesMeta": {
-    "@picolocus/core": {
-      "optional": true
-    }
   },
   "devDependencies": {
     "@picolocus/core": "^1.0.3",
     "typescript": "^5.7.2",
-    "vite": "^6.0.5"
+    "vite": "^6.4.6"
   }
 }

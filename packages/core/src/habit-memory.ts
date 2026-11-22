@@ -4,6 +4,8 @@
  * Invariant: Strip __proto__, constructor, and prototype to prevent prototype pollution.
  */
 
+import { fnv1a32Hex } from './hash.js';
+
 export interface HabitEntry {
   itemId: string;
   count: number;
@@ -16,18 +18,7 @@ export const MAX_HABIT_COUNT = 5.0;
 export const MIN_HABIT_PRUNE_THRESHOLD = 0.05;
 export const MAX_HABIT_BOOST = 0.08;
 
-/**
- * 32-bit FNV-1a hash of a string, returning an 8-character lowercase hex string.
- */
-export function fnv1a32Hex(str: string): string {
-  let hash = 0x811c9dc5;
-  const len = str.length;
-  for (let i = 0; i < len; i++) {
-    hash ^= str.charCodeAt(i);
-    hash = Math.imul(hash, 0x01000193);
-  }
-  return (hash >>> 0).toString(16).padStart(8, '0');
-}
+export { fnv1a32Hex };
 
 export class HabitMemory {
   private readonly namespaceSalt: string;
@@ -50,7 +41,7 @@ export class HabitMemory {
   }
 
   /**
-   * Alias for backward compatibility.
+   * @deprecated Use `bucketKey` instead. Alias for backward compatibility.
    */
   hashQuery(normalizedAffirmativeQuery: string): string {
     return this.bucketKey(normalizedAffirmativeQuery);
