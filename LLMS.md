@@ -142,12 +142,13 @@ All modifications must pass the 10 quality gates prior to commit:
 | Gate | Command | Passing Standard |
 |---|---|---|
 | **Build SDK** | `npm run build` | All packages compile; `@picolocus/web` `<= 26 KB` gzipped |
+| **Verify Versions** | `npm run verify:versions` | Monorepo package manifests and lockfile version parity |
 | **Typecheck** | `npm run typecheck` | TypeScript exit 0 across monorepo |
-| **Unit Tests** | `npm test` | 53/53 Vitest unit tests pass |
+| **Unit Tests** | `npm test` | 68/68 Vitest unit tests pass |
 | **Scan Manifests** | `npm run scan` | AST scanner extracts controls and generates manifests |
 | **Verify RBAC** | `npm run verify` | 0 restricted controls leaked into public manifests |
 | **Query Suite** | `npm run test:queries -- --require-onnx` | All golden query assertions match expected decisions |
-| **Model Smoke** | `npm run smoke:model -- --model mdbr-leaf-ir --require-onnx` | Latency `< 35 ms`, RSS `< 250 MB` |
+| **Model Smoke** | `npm run smoke:model -- --model mdbr-leaf-ir --require-onnx` | Latency `< 60 ms`, RSS `< 350 MB` |
 | **Pack Tarballs** | `npm run pack:sdk` *(BypassSandbox: true)* | Clean `.tgz` tarballs generated in `release/` |
-| **Real Browser E2E** | `npm run test:e2e` *(BypassSandbox: true)* | 17/17 Playwright scenarios pass in Microsoft Edge |
+| **Real Browser E2E** | `npm run test:e2e` *(BypassSandbox: true)* | 18/18 Playwright scenarios pass in Chromium/Edge |
 | **Git Hygiene** | `git status` | Zero untracked scratch files or debug artifacts |

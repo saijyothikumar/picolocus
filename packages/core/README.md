@@ -29,15 +29,40 @@ const engine = new PicolocusEngine({
     minConfidence: 0.29,
     oodSemanticFloor: 0.44,
   },
+  tierOrder: ['free', 'pro', 'enterprise'],
 });
 
-// Load compiled manifest
-await engine.loadManifests({
-  public: '/manifests/manifest.public.json',
-});
+// Load in-memory manifests (URL fetching is handled by @picolocus/web in browsers)
+engine.loadManifests([
+  {
+    role: 'public',
+    items: [
+      {
+        id: 'btn-export',
+        label: 'Export Audit Logs',
+        selector: '#export-btn',
+        route: '/audit',
+        roles: ['public'],
+        actionType: 'click',
+      },
+    ],
+  },
+]);
 
 // Synchronous keystroke-1 instant search (<0.5 ms)
 const instantResponse = engine.searchInstant('export audit logs');
+console.log(instantResponse.matches);
+```
+
+## Utilities & Hashing
+
+`@picolocus/core` provides canonical zero-dependency hashing utilities via the root export or `@picolocus/core/hash`:
+
+```typescript
+import { fnv1a32, fnv1a32Hex } from '@picolocus/core/hash';
+
+const hashNum = fnv1a32('my-element-id'); // 32-bit unsigned integer
+const hashHex = fnv1a32Hex('my-element-id'); // 8-char hex string
 ```
 
 ## License

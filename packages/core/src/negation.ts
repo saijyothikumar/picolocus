@@ -1,5 +1,5 @@
 /**
- * @picolocus/core - Negation-first intent gate, action polarity & zero-dependency suffix stemmer (v1.0.3)
+ * @picolocus/core - Negation-first intent gate, action polarity & zero-dependency suffix stemmer (v1.0.4)
  * Product Invariant: "do not delete" must NEVER highlight "Delete workspace".
  * Product Invariant: Directional antonyms (import vs export) trigger polarity rejection;
  * Reversible toggles (enable vs disable) detect live state conflicts without penalty.

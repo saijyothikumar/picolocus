@@ -1,5 +1,5 @@
 /**
- * @picolocus/onnx - Client-side worker controller, opt-in consent & tab-sleep RAM reaper (v1.0.3)
+ * @picolocus/onnx - Client-side worker controller, opt-in consent & tab-sleep RAM reaper (v1.0.4)
  * Invariants:
  * - consentMode defaults strictly to 'opt-in' (0 WASM RAM, 0 network bytes prior to consent).
  * - reapIdleWorker terminates Worker after 120s idle or 15s after document.visibilityState === 'hidden'.

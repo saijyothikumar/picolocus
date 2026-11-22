@@ -28,6 +28,9 @@ playwright-report/
 .eslintcache
 .turbo/
 .vite/
+.vite-temp/
+.vitest/
+.vitest-cache/
 
 # Logs & Scratch scripts
 *.log
@@ -36,6 +39,7 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 scratch/
+scripts/audit-*.mjs
 
 # Generated training workspaces
 **/training/

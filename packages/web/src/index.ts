@@ -1,6 +1,6 @@
 /**
  * @picolocus/web
- * Client-Side Micro-Intelligence Web SDK (v1.0.3)
+ * Client-Side Micro-Intelligence Web SDK (v1.0.4)
  * License: Apache-2.0
  */
 

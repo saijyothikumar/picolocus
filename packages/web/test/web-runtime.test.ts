@@ -278,7 +278,7 @@ describe('SpotlightBar UI Strict CSP Compliance', () => {
   });
 });
 
-describe('v1.0.0 Focused Opt-In Web Runtime Capabilities', () => {
+describe('Focused Opt-In Web Runtime Capabilities', () => {
   let container: HTMLElement;
 
   beforeEach(() => {

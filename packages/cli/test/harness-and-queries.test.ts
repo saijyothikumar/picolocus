@@ -7,7 +7,7 @@ import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 
-describe('CLI v1.0.0 Harness & Playbook Compilation', () => {
+describe('CLI Harness & Playbook Compilation', () => {
   it('parses triggerChain and whenUserAsks and isolates [data-mi-untrusted]', () => {
     const html = `
       <section>

@@ -1,5 +1,5 @@
 /**
- * @picolocus/onnx - Transformers.js offline environment configuration (v1.0.3)
+ * @picolocus/onnx - Transformers.js offline environment configuration (v1.0.4)
  * Invariant: allowLocalModels = true, allowRemoteModels = false (corporate proxy & Zscaler safety).
  * Standardized on MongoDB/mdbr-leaf-ir (q4 ONNX + single-threaded WASM).
  */

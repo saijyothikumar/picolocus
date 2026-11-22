@@ -1,6 +1,6 @@
 #!/usr/bin/env node
-import { readFileSync } from 'node:fs';
-import { resolve, dirname } from 'node:path';
+import { readFileSync, readdirSync } from 'node:fs';
+import { resolve, dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -16,12 +16,19 @@ if (!canonicalVersion) {
 
 let errors = 0;
 
-function checkPkg(pkgPath, label) {
+function checkPkg(pkgPath, label, isPublishedWorkspace = false) {
   try {
     const pkg = JSON.parse(readFileSync(pkgPath, 'utf8'));
     if (pkg.version !== canonicalVersion) {
       console.error(`[MISMATCH] ${label} version is "${pkg.version}", expected "${canonicalVersion}".`);
       errors++;
+    }
+
+    if (isPublishedWorkspace) {
+      if (!pkg.publishConfig || pkg.publishConfig.access !== 'public') {
+        console.error(`[MISMATCH] ${label} is missing 'publishConfig: { "access": "public" }'.`);
+        errors++;
+      }
     }
 
     const checkDeps = (depsObj, kind) => {
@@ -46,16 +53,39 @@ function checkPkg(pkgPath, label) {
   }
 }
 
-// Check all workspaces
+// 1. Check all published workspaces
 const workspaces = ['core', 'cli', 'web', 'onnx'];
 for (const ws of workspaces) {
-  checkPkg(resolve(rootDir, 'packages', ws, 'package.json'), `packages/${ws}/package.json`);
+  checkPkg(resolve(rootDir, 'packages', ws, 'package.json'), `packages/${ws}/package.json`, true);
 }
 
-// Check demo app
-checkPkg(resolve(rootDir, 'sandbox', 'demo-saas', 'package.json'), 'sandbox/demo-saas/package.json');
+// 2. Check demo app
+checkPkg(resolve(rootDir, 'sandbox', 'demo-saas', 'package.json'), 'sandbox/demo-saas/package.json', false);
 
-// Check CLI banner in bin.ts
+// 3. Check package-lock.json
+try {
+  const lock = JSON.parse(readFileSync(resolve(rootDir, 'package-lock.json'), 'utf8'));
+  if (lock.version !== canonicalVersion) {
+    console.error(`[MISMATCH] package-lock.json top-level version is "${lock.version}", expected "${canonicalVersion}".`);
+    errors++;
+  }
+  if (lock.packages && lock.packages[''] && lock.packages[''].version !== canonicalVersion) {
+    console.error(`[MISMATCH] package-lock.json packages[""].version is "${lock.packages[''].version}", expected "${canonicalVersion}".`);
+    errors++;
+  }
+  for (const ws of workspaces) {
+    const key = `packages/${ws}`;
+    if (lock.packages && lock.packages[key] && lock.packages[key].version !== canonicalVersion) {
+      console.error(`[MISMATCH] package-lock.json packages["${key}"].version is "${lock.packages[key].version}", expected "${canonicalVersion}".`);
+      errors++;
+    }
+  }
+} catch (err) {
+  console.error('[ERROR] Failed to verify package-lock.json:', err.message);
+  errors++;
+}
+
+// 4. Check CLI banner in bin.ts
 try {
   const binContent = readFileSync(resolve(rootDir, 'packages', 'cli', 'src', 'bin.ts'), 'utf8');
   if (!binContent.includes(`v${canonicalVersion}`)) {
@@ -67,9 +97,35 @@ try {
   errors++;
 }
 
+// 5. Check source file header comments in packages/ and sandbox/
+function checkSourceHeaders(dir) {
+  const entries = readdirSync(dir, { withFileTypes: true });
+  for (const entry of entries) {
+    if (entry.name === 'node_modules' || entry.name === 'dist' || entry.name === '.git') continue;
+    const full = join(dir, entry.name);
+    if (entry.isDirectory()) {
+      checkSourceHeaders(full);
+    } else if (entry.isFile() && (entry.name.endsWith('.ts') || entry.name.endsWith('.js'))) {
+      try {
+        const content = readFileSync(full, 'utf8');
+        const match = content.match(/\(v(\d+\.\d+\.\d+)\)/);
+        if (match && match[1] !== canonicalVersion) {
+          console.error(`[MISMATCH] Header in ${full.replace(rootDir, '')} has "(v${match[1]})", expected "(v${canonicalVersion})".`);
+          errors++;
+        }
+      } catch {
+        // Skip
+      }
+    }
+  }
+}
+
+checkSourceHeaders(resolve(rootDir, 'packages'));
+checkSourceHeaders(resolve(rootDir, 'sandbox'));
+
 if (errors > 0) {
   console.error(`\n[FAIL] Found ${errors} version synchronization error(s). Run 'node scripts/sync-version.mjs ${canonicalVersion}' to fix.`);
   process.exit(1);
 }
 
-console.log(`[OK] All monorepo packages, dependencies, and CLI banners verified consistent at v${canonicalVersion}.`);
+console.log(`[OK] All monorepo packages, lockfile, CLI banners, and source headers verified consistent at v${canonicalVersion}.`);

@@ -1,5 +1,5 @@
 /**
- * @picolocus/core - HabitMemory local user preference tracking (v1.0.3)
+ * @picolocus/core - HabitMemory local user preference tracking (v1.0.4)
  * Invariant: Never stores raw user query text; keyed solely by salted 32-bit FNV-1a hex hashes.
  * Invariant: Strip __proto__, constructor, and prototype to prevent prototype pollution.
  */
