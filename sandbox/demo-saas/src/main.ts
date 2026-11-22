@@ -1,5 +1,5 @@
 /**
- * Demo SaaS Workbench Application Entry Point (v1.0.2)
+ * Demo SaaS Workbench Application Entry Point (v1.0.3)
  * License: Apache-2.0
  */
 

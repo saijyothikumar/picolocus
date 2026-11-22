@@ -1,5 +1,5 @@
 /**
- * @picolocus/core - Embedder Plugin port & zero-hash vector quantization primitives (v1.0.2)
+ * @picolocus/core - Embedder Plugin port & zero-hash vector quantization primitives (v1.0.3)
  * Invariant: ZERO fake string-hash pseudo-embeddings anywhere.
  */
 

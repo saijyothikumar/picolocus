@@ -1,5 +1,5 @@
 /**
- * @picolocus/onnx - WebWorker running AutoModel Matryoshka extraction off the UI thread (v1.0.2)
+ * @picolocus/onnx - WebWorker running AutoModel Matryoshka extraction off the UI thread (v1.0.3)
  * Standardized on MongoDB/mdbr-leaf-ir (256-dim Int8 Matryoshka sentence_embedding).
  * Features:
  * - Direct AutoModel/AutoTokenizer loading bypassing mean-pool corruption

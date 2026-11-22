@@ -1,4 +1,4 @@
-# AGENTS.md — Business Logic & Architectural Context (Picolocus v1.0.2)
+# AGENTS.md — Business Logic & Architectural Context (Picolocus v1.0.3)
 
 > Concise context for AI agents. Focuses strictly on **business logic** and **why** each architectural invariant exists — omitting standard TypeScript/monorepo details agents can infer directly.
 

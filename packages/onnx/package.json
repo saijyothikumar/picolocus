@@ -1,6 +1,6 @@
 {
     "name":  "@picolocus/onnx",
-    "version":  "1.0.2",
+    "version":  "1.0.3",
     "description":  "Optional WebWorker and WebAssembly EmbedderPlugin with latest-only queue and idle RAM reaper for @picolocus",
     "author": "Sai Jyothi Kumar <saikumarjyo14@gmail.com>",
     "homepage": "https://github.com/saijyothikumar/picolocus/tree/main/packages/onnx#readme",
@@ -46,7 +46,7 @@
                     "build":  "tsc -b"
                 },
     "dependencies":  {
-                         "@picolocus/core":  "^1.0.2"
+                         "@picolocus/core":  "^1.0.3"
                      },
     "peerDependencies":  {
                              "@huggingface/transformers":  "^3.0.0"
