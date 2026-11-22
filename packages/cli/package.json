@@ -21,6 +21,9 @@
         "smoke-test"
     ],
     "license":  "Apache-2.0",
+    "publishConfig": {
+        "access": "public"
+    },
     "type":  "module",
     "bin":  {
                 "picolocus":  "./dist/bin.js",
