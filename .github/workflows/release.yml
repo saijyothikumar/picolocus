@@ -81,33 +81,28 @@ jobs:
         run: |
           mkdir -p release/publish-logs
           echo "### NPM Publish Run Summary" >> $GITHUB_STEP_SUMMARY
-          echo "Node version: $(node -v)" >> $GITHUB_STEP_SUMMARY
-          echo "npm version: $(npm -v)" >> $GITHUB_STEP_SUMMARY
           
           WHO=$(npm whoami --registry=https://registry.npmjs.org/ 2>&1) || true
           echo "Authenticated NPM user: \`$WHO\`" >> $GITHUB_STEP_SUMMARY
+          echo "::warning title=NPM Whoami::$WHO"
           
-          FAILED=0
           for pkg in core cli web onnx; do
             echo "--- Publishing @picolocus/$pkg ---"
-            if npm publish --workspace=@picolocus/$pkg --access public --provenance 2>&1 | tee "release/publish-logs/$pkg.log"; then
+            OUTPUT=$(npm publish --workspace=@picolocus/$pkg --access public --provenance 2>&1)
+            STATUS=$?
+            echo "$OUTPUT" > "release/publish-logs/$pkg.log"
+            echo "$OUTPUT"
+            
+            if [ $STATUS -eq 0 ]; then
               echo "- :white_check_mark: Published \`@picolocus/$pkg\`" >> $GITHUB_STEP_SUMMARY
+              echo "::notice title=Published @picolocus/$pkg::Successfully published @picolocus/$pkg"
             else
               echo "- :x: Failed to publish \`@picolocus/$pkg\`" >> $GITHUB_STEP_SUMMARY
-              echo '<details><summary>Error output for @picolocus/'$pkg'</summary>' >> $GITHUB_STEP_SUMMARY
-              echo '' >> $GITHUB_STEP_SUMMARY
-              echo '```' >> $GITHUB_STEP_SUMMARY
-              cat "release/publish-logs/$pkg.log" >> $GITHUB_STEP_SUMMARY
-              echo '```' >> $GITHUB_STEP_SUMMARY
-              echo '</details>' >> $GITHUB_STEP_SUMMARY
-              FAILED=1
+              CLEAN_ERR=$(echo "$OUTPUT" | tr '\r\n' ' ')
+              echo "::error title=Publish Error @picolocus/$pkg::$CLEAN_ERR"
+              exit 1
             fi
           done
-          
-          if [ "$FAILED" -ne 0 ]; then
-            echo "Publish encountered errors. Check summary and logs."
-            exit 1
-          fi
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
